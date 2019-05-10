@@ -1,26 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Component} from 'react';
+import AppBar from './components/AppBar';
+import lotteryFactory from './ethereum/loteryFactory';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+
+    loadLotteryFactory = async () => {
+        console.log('fetching lotteries')
+        const lotteries = await lotteryFactory.methods.getDeployedLotteries().call();
+        console.log('lotteries: ', lotteries)
+        return {lotteries};
+    };
+
+
+    render() {
+
+        const lotteries = this.loadLotteryFactory();
+
+        return (
+            <div className="App">
+                <AppBar/>
+
+                {lotteries.toString()}
+
+            </div>
+        );
+    }
 }
 
 export default App;
