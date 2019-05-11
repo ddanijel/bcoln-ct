@@ -12,14 +12,21 @@ import {createLottery} from "../store/actions/lotteryActionCreators";
 
 
 class CreateLotteryDialog extends React.Component {
-
+    state = {
+        ticketPrice: ''
+    };
 
     handleClose = () => {
         this.props.onCloseCreateLotteryDialog();
     };
 
     handleCreateLotteryPressed = () => {
-        this.props.onCreateLotteryPressed(123);
+        this.props.onCreateLotteryPressed(this.state.ticketPrice);
+        this.setState({...this.state, ticketPrice: ''});
+    };
+
+    handleChange = name => event => {
+        this.setState({[name]: event.target.value});
     };
 
     render() {
@@ -41,6 +48,8 @@ class CreateLotteryDialog extends React.Component {
                             label="Ticket Price"
                             type="number"
                             fullWidth
+                            value={this.state.ticketPrice}
+                            onChange={this.handleChange('ticketPrice')}
                         />
                     </DialogContent>
                     <DialogActions>

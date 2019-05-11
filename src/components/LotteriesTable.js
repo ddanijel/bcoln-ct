@@ -1,6 +1,7 @@
 import React from "react";
 import MaterialTable from "material-table";
 import {fetchDeployedLotteries} from "../store/actions/lotteryActionCreators";
+import {onUiOpenPlayLotteryDialog} from "../store/actions/uiActionCreators";
 import {connect} from "react-redux";
 
 class LotteriesTable extends React.Component {
@@ -11,6 +12,10 @@ class LotteriesTable extends React.Component {
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         return this.props.deployedLotteries.length !== nextProps.deployedLotteries.length;
     }
+
+    onOpenPlayLotteryDialogPressed = address => {
+        this.props.onOpenPlayLotteryDialogPressed(address);
+    };
 
     render() {
         return (
@@ -37,7 +42,7 @@ class LotteriesTable extends React.Component {
                     {
                         icon: 'play_arrow',
                         tooltip: 'Play',
-                        onClick: (event, rowData) => alert("You play " + rowData.address)
+                        onClick: (event, rowData) => this.onOpenPlayLotteryDialogPressed(rowData)
                     }
                 ]}
             />
@@ -54,7 +59,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchDeployedLotteries: () => dispatch(fetchDeployedLotteries())
+        fetchDeployedLotteries: () => dispatch(fetchDeployedLotteries()),
+        onOpenPlayLotteryDialogPressed: lottery => dispatch(onUiOpenPlayLotteryDialog(lottery))
     }
 };
 

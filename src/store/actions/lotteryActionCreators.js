@@ -1,5 +1,5 @@
-import {SET_LOTTERY_ACTION, SET_NEW_LOTTERY_ADDRESS_ADDRESS} from './actionTypes';
-import {uiCloseCreateLotteryDialog, uiStartLoading, uiStopLoading} from "./uiActionCreators";
+import {SET_ACTIVE_LOTTERY_ACTION, SET_LOTTERY_ACTION, SET_NEW_LOTTERY_ADDRESS_ADDRESS} from './actionTypes';
+import {uiCloseCreateLotteryDialog, uiClosePlayLotteryDialog, uiStartLoading, uiStopLoading} from "./uiActionCreators";
 import LotteryFactory from "../../ethereum/lotteryFactory";
 import Lottery from "../../ethereum/lottery";
 import web3 from '../../ethereum/web3';
@@ -24,12 +24,12 @@ export const loadLotteries = addresses => {
                 const lotteryData = {
                     address: address,
                     playersCount: web3.utils.hexToNumber(lottery[0]),
-                    ticketPrice: web3.utils.hexToNumber(lottery[1]),
+                    ticketPrice: web3.utils.fromWei(String(lottery[1]), 'ether'),
                     owner: lottery[2]
                 };
                 dispatch(setLotteryData(lotteryData));
             } catch (e) {
-                console.error('Error while fetching the lottery data: ', e);
+                console.error('Error while fetching the lottery data from the address: ', address, e);
             }
         });
     }
@@ -57,22 +57,19 @@ export const createLottery = ticketPrice => {
         dispatch(uiStartLoading());
         dispatch(uiCloseCreateLotteryDialog());
 
-        let accounts;
-        setTimeout(
-            accounts = await web3.eth.getAccounts()
-            , 10000);
+        const accounts = await web3.eth.getAccounts();
 
         console.log('accounts: ', accounts);
 
         try {
             // todo this creates a contract but the callback is not handled properly
             console.log('Creating a new Lottery from the account: ', accounts[0]);
-            const result = await LotteryFactory.methods.createLottery(ticketPrice).send({
+            const result = await LotteryFactory.methods.createLottery(web3.utils.toWei('0.01', 'ether')).send({
                 from: accounts[0]
             });
             console.log('Lottery created: ', result);
         } catch (e) {
-            console.error('Errow while creating a Lottery: ', e);
+            console.error('Error while creating a Lottery: ', e);
         }
 
         dispatch(uiStopLoading());
@@ -84,5 +81,39 @@ export const setNewLotteryAddress = address => {
     return {
         type: SET_NEW_LOTTERY_ADDRESS_ADDRESS,
         address
+    }
+};
+
+export const playLottery = (lotteryData, guess) => {
+
+    console.log('playing: ', lotteryData, 'guess: ', guess);
+
+    return async dispatch => {
+        dispatch(uiStartLoading());
+        dispatch(uiClosePlayLotteryDialog());
+
+        const accounts = await web3.eth.getAccounts();
+        console.log('accounts: ', accounts);
+
+        try {
+            const lottery = await getLotteryInstance(lotteryData.address);
+            console.log('lot: ', lottery);
+            const result = await lottery.methods.play(guess).send({
+                from: accounts[0],
+                value: web3.utils.toWei(String(Number(lotteryData.ticketPrice) + 0.0001), 'ether')
+            });
+            console.log('Lottery played: ', result);
+        } catch (e) {
+            console.error('Error while playing the Lottery: ', e);
+        }
+
+        dispatch(uiStopLoading());
+    };
+};
+
+export const setActiveLottery = lottery => {
+    return {
+        type: SET_ACTIVE_LOTTERY_ACTION,
+        lottery
     }
 };
