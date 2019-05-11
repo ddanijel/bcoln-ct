@@ -17,7 +17,7 @@ contract LotteryFactory {
 contract Lottery {
 
     address public owner;
-    uint public price;
+    uint public ticketPrice;
     uint playersCount = 0;
 
     struct Player {
@@ -29,11 +29,11 @@ contract Lottery {
 
     constructor(uint priceToPlay, address manager) public {
         owner = manager;
-        price = priceToPlay;
+        ticketPrice = priceToPlay;
     }
 
     function play(uint guess) public payable {
-        require(msg.value > price);
+        require(msg.value > ticketPrice);
         require(guess > 0 && guess < 10);
 
         Player memory newPlayer = Player({
@@ -42,6 +42,16 @@ contract Lottery {
             });
         playersCount++;
         players.push(newPlayer);
+    }
+
+    function describeLottery() public view returns (
+        uint, uint, address
+    ) {
+        return (
+        playersCount,
+        ticketPrice,
+        owner
+        );
     }
 
 }

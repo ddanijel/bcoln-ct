@@ -9,7 +9,6 @@ const lotteryPath = path.resolve(__dirname, 'contracts', 'Lottery.sol');
 
 const source = fs.readFileSync(lotteryPath, 'utf8');
 const output = solc.compile(source, 1).contracts;
-console.log('compiling again');
 
 fs.ensureDirSync(buildPath);
 
@@ -19,3 +18,5 @@ for(let contract in output) {
         output[contract]
     );
 }
+
+// to compile: node ./src/ethereum/compile.js

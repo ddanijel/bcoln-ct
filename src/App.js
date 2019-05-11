@@ -1,27 +1,40 @@
 import React, {Component} from 'react';
 import AppBar from './components/AppBar';
-import lotteryFactory from './ethereum/loteryFactory';
+import loadLotteryFactory from './util/loadLotteryFactory';
+import CreateLotteryDialog from "./components/CreateLotteryDialog";
 
 class App extends Component {
+    state = {
+        lotteries: []
+    };
+
+    componentDidMount() {
+        this.loadLotteryFactory();
+    }
 
     loadLotteryFactory = async () => {
-        console.log('fetching lotteries')
-        const lotteries = await lotteryFactory.methods.getDeployedLotteries().call();
-        console.log('lotteries: ', lotteries)
-        return {lotteries};
+        console.log('fetching lotteries');
+        const lotteries = await loadLotteryFactory();
+        console.log('lotteries: ', lotteries);
+        this.setState({
+            lotteries
+        })
     };
+
+
+
 
 
     render() {
 
-        const lotteries = this.loadLotteryFactory();
 
         return (
             <div className="App">
                 <AppBar/>
 
-                {lotteries.toString()}
+                {this.state.lotteries.toString()}
 
+                <CreateLotteryDialog/>
             </div>
         );
     }
