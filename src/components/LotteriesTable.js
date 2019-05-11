@@ -9,18 +9,19 @@ class LotteriesTable extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        console.log('next: ', nextProps.deployedLotteries.length);
         return this.props.deployedLotteries.length !== nextProps.deployedLotteries.length;
     }
 
     render() {
         return (
             <MaterialTable
+                searchable="false"
                 title="Active Lotteries"
                 columns={[
                     {title: 'Ticket Price', field: 'ticketPrice'},
                     {title: 'Number of Players', field: 'numberOfPlayers'},
-                    {title: 'Address', field: 'address'}
+                    {title: 'Address', field: 'address'},
+                    {title: 'Owner', field: 'owner'}
                 ]}
                 data={
                     this.props.deployedLotteries.map(lottery => {
@@ -28,7 +29,8 @@ class LotteriesTable extends React.Component {
                         return {
                             ticketPrice: lottery.ticketPrice,
                             numberOfPlayers: lottery.playersCount,
-                            address: lottery.address
+                            address: lottery.address,
+                            owner: lottery.owner
                         }
                     })}
                 actions={[

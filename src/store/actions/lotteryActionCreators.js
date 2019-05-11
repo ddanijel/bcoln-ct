@@ -16,14 +16,10 @@ export const fetchDeployedLotteries = () => {
     }
 };
 
-// todo continue here
 export const loadLotteries = addresses => {
-
     return async dispatch => {
-
         addresses.forEach(async address => {
             try {
-                // const lotteryInstance = await getLotteryInstance(addresses[0]);
                 const lottery = await getLotteryDetails(address);
                 const lotteryData = {
                     address: address,
@@ -49,7 +45,6 @@ const getLotteryInstance = async (address) => {
 };
 
 export const setLotteryData = lottery => {
-    console.log('setting lot: ', lottery);
     return {
         type: SET_LOTTERY_ACTION,
         lottery
