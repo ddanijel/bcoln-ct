@@ -1,29 +1,19 @@
 import React, {Component} from 'react';
 import AppBar from './components/AppBar';
-import loadLotteryFactory from './util/loadLotteryFactory';
 import CreateLotteryDialog from "./components/CreateLotteryDialog";
+import {connect} from "react-redux";
+import {fetchDeployedLotteries} from "./store/actions/lotteryActionCreators";
+
 
 class App extends Component {
-    state = {
-        lotteries: []
-    };
 
     componentDidMount() {
-        this.loadLotteryFactory();
+        this.props.fetchDeployedLotteries();
     }
 
-    loadLotteryFactory = async () => {
-        console.log('fetching lotteries');
-        const lotteries = await loadLotteryFactory();
-        console.log('lotteries: ', lotteries);
-        this.setState({
-            lotteries
-        })
-    };
-
-
-
-
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        return this.props.deployedLotteries.length !== nextProps.deployedLotteries.length;
+    }
 
     render() {
 
@@ -32,7 +22,7 @@ class App extends Component {
             <div className="App">
                 <AppBar/>
 
-                {this.state.lotteries.toString()}
+                {this.props.deployedLotteries.length}
 
                 <CreateLotteryDialog/>
             </div>
@@ -40,4 +30,17 @@ class App extends Component {
     }
 }
 
-export default App;
+const mapStateToProps = state => {
+    return {
+        deployedLotteries: state.lottery.deployedLotteries
+    };
+};
+
+
+const mapDispatchToProps = dispatch => {
+    return {
+        fetchDeployedLotteries: () => dispatch(fetchDeployedLotteries())
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -1,7 +1,7 @@
-import {CREATE_LOTTERY_ACTION} from '../actions/actionTypes';
+import {CREATE_LOTTERY_ACTION, SET_DEPLOYED_LOTTERIES_ACTION} from '../actions/actionTypes';
 
 const initialState = {
-    activeLotteries: []
+    deployedLotteries: []
 };
 
 const reducer = (state = initialState, action) => {
@@ -9,6 +9,11 @@ const reducer = (state = initialState, action) => {
         case CREATE_LOTTERY_ACTION:
             return {
                 ...state
+            };
+        case SET_DEPLOYED_LOTTERIES_ACTION:
+            return {
+                ...state,
+                deployedLotteries: action.lotteries
             };
         default:
             return state;
