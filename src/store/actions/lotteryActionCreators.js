@@ -7,31 +7,37 @@ import web3 from '../../ethereum/web3';
 
 export const fetchDeployedLotteries = () => {
     return async dispatch => {
-
         try {
             const deployedLotteriesAddresses = await LotteryFactory.methods.getDeployedLotteries().call();
             dispatch(loadLotteries(deployedLotteriesAddresses));
         } catch (e) {
             console.error('Error while fetching deployed lotteries: ', e);
         }
-
     }
 };
 
+// todo continue here
 export const loadLotteries = addresses => {
-    const lotteries = [];
     return async dispatch => {
         dispatch(uiStartLoading());
-        addresses.forEach((address, index) => {
-            const lottery = getLotteryDetails(address);
-            const lotterySummary = {
-                index,
-                address,
-                playersCount: web3.utils.hexToNumber(lottery[0]),
-                ticketPrice: web3.utils.hexToNumber(lottery[1]),
-                owner: lottery[2]
-            };
-            lotteries.push(lotterySummary);
+
+
+        const lotteries = await addresses.map(async (address, index) => {
+
+            // const lottery = await getLotteryDetails(address);
+
+            // console.log('nl: ', lottery);
+            getLotteryDetails(address)
+                .then(lottery => {
+                    console.log('creating lot: ', lottery);
+                    return {
+                        index,
+                        address,
+                        playersCount: web3.utils.hexToNumber(lottery[0]),
+                        ticketPrice: web3.utils.hexToNumber(lottery[1]),
+                        owner: lottery[2]
+                    };
+                });
         });
         dispatch(setLoadedLotteries(lotteries));
         dispatch(uiStopLoading());
@@ -40,7 +46,6 @@ export const loadLotteries = addresses => {
 
 const getLotteryDetails = async (address) => {
     const lotteryInstance = await getLotteryInstance(address);
-
     return await lotteryInstance.methods.describeLottery().call();
 };
 
@@ -50,6 +55,7 @@ const getLotteryInstance = async (address) => {
 
 
 export const setLoadedLotteries = lotteries => {
+    console.log('setting lotteries: ', lotteries);
     return {
         type: SET_DEPLOYED_LOTTERIES_ACTION,
         lotteries
