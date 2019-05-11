@@ -8,6 +8,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {connect} from "react-redux";
 import {uiCloseCreateLotteryDialog} from "../store/actions/uiActionCreators";
+import {createLottery} from "../store/actions/lotteryActionCreators";
 
 
 class CreateLotteryDialog extends React.Component {
@@ -18,7 +19,7 @@ class CreateLotteryDialog extends React.Component {
     };
 
     handleCreateLotteryPressed = () => {
-        console.log('create lottery pressed');
+        this.props.onCreateLotteryPressed(123);
     };
 
     render() {
@@ -31,7 +32,7 @@ class CreateLotteryDialog extends React.Component {
                     <DialogTitle id="form-dialog-title">New Lottery</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            To create a new lottery, please the ticket price.
+                            To create a new lottery, please enter the ticket price.
                         </DialogContentText>
                         <Input
                             autoFocus
@@ -57,7 +58,8 @@ class CreateLotteryDialog extends React.Component {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onCloseCreateLotteryDialog: () => dispatch(uiCloseCreateLotteryDialog())
+        onCloseCreateLotteryDialog: () => dispatch(uiCloseCreateLotteryDialog()),
+        onCreateLotteryPressed: ticketPrice => dispatch(createLottery(ticketPrice))
     }
 };
 
