@@ -7,6 +7,9 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import {connect} from "react-redux";
+import {uiOpenCreateLotteryDialog} from "../store/actions/uiActionCreators";
+
 
 const styles = {
     root: {
@@ -36,7 +39,9 @@ function ButtonAppBar(props) {
                     <Typography variant="h6" color="inherit" className={classes.grow}>
                         Blockchain Lottery
                     </Typography>
-                    <Button color="inherit">Create Lottery</Button>
+                    <Button
+                        onClick={() => props.onOpenCreateLotteryDialog()}
+                        color="inherit">Create Lottery</Button>
                 </Toolbar>
             </AppBar>
         </div>
@@ -47,4 +52,11 @@ ButtonAppBar.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(ButtonAppBar);
+const mapDispatchToProps = dispatch => {
+    return {
+        onOpenCreateLotteryDialog: () => dispatch(uiOpenCreateLotteryDialog())
+    }
+};
+
+
+export default connect(null, mapDispatchToProps)(withStyles(styles)(ButtonAppBar));

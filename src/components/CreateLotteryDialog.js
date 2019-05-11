@@ -6,28 +6,25 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import {connect} from "react-redux";
+import {uiCloseCreateLotteryDialog} from "../store/actions/uiActionCreators";
 
-export default class FormDialog extends React.Component {
-    state = {
-        open: false,
-    };
 
-    handleClickOpen = () => {
-        this.setState({ open: true });
-    };
+class CreateLotteryDialog extends React.Component {
+
 
     handleClose = () => {
-        this.setState({ open: false });
+        this.props.onCloseCreateLotteryDialog();
+    };
+
+    handleCreateLotteryPressed = () => {
+        console.log('create lottery pressed');
     };
 
     render() {
         return (
-            <div>
-                <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
-                    Create Lottery
-                </Button>
                 <Dialog
-                    open={this.state.open}
+                    open={this.props.isCreateLotteryDialogOpen}
                     onClose={this.handleClose}
                     aria-labelledby="form-dialog-title"
                 >
@@ -49,12 +46,25 @@ export default class FormDialog extends React.Component {
                         <Button onClick={this.handleClose} color="primary">
                             Cancel
                         </Button>
-                        <Button onClick={this.handleClose} color="primary">
+                        <Button onClick={this.handleCreateLotteryPressed} color="primary">
                             Create
                         </Button>
                     </DialogActions>
                 </Dialog>
-            </div>
         );
     }
 }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onCloseCreateLotteryDialog: () => dispatch(uiCloseCreateLotteryDialog())
+    }
+};
+
+const mapStateToProps = state => {
+    return {
+        isCreateLotteryDialogOpen: state.ui.isCreateLotteryDialogOpen
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateLotteryDialog);
