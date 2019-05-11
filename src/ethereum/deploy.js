@@ -3,8 +3,8 @@ const Web3 = require('src/ethereum/web3');
 const compiledLottery = require('./build/LotteryFactory');
 
 const provider = new HDWalletProvider(
-    process.env.ETH_ACCOUNT_SEED_WORDS,
-    process.env.ETH_REMOTE_NODE_URL
+    process.env.REACT_APP_ETH_ACCOUNT_SEED_WORDS,
+    process.env.REACT_APP_ETH_REMOTE_NODE_URL
 );
 
 const web3 = new Web3(provider);
@@ -28,4 +28,4 @@ deploy().catch(error => {
 });
 
 
-// to deploy run the following command: ETH_ACCOUNT_SEED_WORDS='<ENTER_SEED_WORDS>' ETH_REMOTE_NODE_URL='<ENTER_NODE_URL>' node ./ethereum/deploy.js
+// to deploy run the following command: REACT_APP_ETH_ACCOUNT_SEED_WORDS='<ENTER_SEED_WORDS>' REACT_APP_ETH_REMOTE_NODE_URL='<ENTER_NODE_URL>' node ./ethereum/deploy.js
