@@ -9,7 +9,7 @@ class LotteriesTable extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        console.log('next: ', nextProps.deployedLotteries);
+        console.log('next: ', nextProps.deployedLotteries.length);
         return this.props.deployedLotteries.length !== nextProps.deployedLotteries.length;
     }
 
@@ -23,8 +23,8 @@ class LotteriesTable extends React.Component {
                     {title: 'Address', field: 'address'}
                 ]}
                 data={
-                    this.props.deployedLotteries.forEach(lottery => {
-                        console.log('inside lottery: ', lottery);
+                    this.props.deployedLotteries.map(lottery => {
+                        // console.log('inside lottery: ', lottery);
                         return {
                             ticketPrice: lottery.ticketPrice,
                             numberOfPlayers: lottery.playersCount,

@@ -1,13 +1,19 @@
 import Web3 from 'web3';
 
-// console.log('REACT_APP_ETH_ACCOUNT_SEED_WORDS: ', process.env.REACT_APP_ETH_ACCOUNT_SEED_WORDS);
-// console.log('REACT_APP_ETH_REMOTE_NODE_URL: ', process.env.REACT_APP_ETH_REMOTE_NODE_URL);
 
-const HDWalletProvider = require('truffle-hdwallet-provider');
+let web3;
 
-const provider = new HDWalletProvider(
-    process.env.REACT_APP_ETH_ACCOUNT_SEED_WORDS,
-    process.env.REACT_APP_ETH_REMOTE_NODE_URL
-);
+if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
+    web3 = new Web3(window.web3.currentProvider);
+} else {
+    const HDWalletProvider = require('truffle-hdwallet-provider');
 
-export default new Web3(provider);
+    const provider = new HDWalletProvider(
+        process.env.REACT_APP_ETH_ACCOUNT_SEED_WORDS,
+        process.env.REACT_APP_ETH_REMOTE_NODE_URL
+    );
+
+    web3 = new Web3(provider);
+}
+
+export default web3;
