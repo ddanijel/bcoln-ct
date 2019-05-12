@@ -1,18 +1,19 @@
 pragma solidity >=0.4.22 <0.6.0;
 
 contract LotteryFactory {
-    Lottery[] public deployedLotteries;
-    
-    function createLottery(uint priceToPlay, uint minGuess, uint maxGuess) public {
-        require(maxGuess > minGuess);
-        Lottery newLottery = new Lottery(priceToPlay, minGuess, maxGuess, address(this), msg.sender);
-        deployedLotteries.push(newLottery);
+
+    address[] public lotteryAddresses;
+    mapping(address => Lottery) lotteryMapping;
+
+    function createLottery(uint priceToPlay) public {
+        Lottery newLottery = new Lottery(priceToPlay, address(uint160(address(this))), msg.sender);
+        lotteryAddresses.push(address(newLottery));
+        lotteryMapping[address(newLottery)] = newLottery;
     }
 
-    function getDeployedLotteries() public view returns (Lottery[] memory) {
-        return deployedLotteries;
+    function getDeployedLotteries() public view returns (address[] memory) {
+        return lotteryAddresses;
     }
-
 }
 
 contract Lottery {
@@ -20,71 +21,54 @@ contract Lottery {
     address public owner;
     address payable public factory;
     uint public ticketPrice;
-    uint playersCount = 0;
-    uint minGuess;
-    uint maxGuess;
-    bool played = false;
+    bool closed = false;
+    uint playerCount = 0;
 
-    struct Player {
-        address payable playerAddress;
-        uint guess;
-    }
+    mapping(uint8 => address payable[]) playersByNumber;
 
-    Player[] public players;
-    Player[] public winners;
-
-    constructor(uint priceToPlay, uint _minGuess, uint _maxGuess, address _factory, address _owner) public {
+    constructor(uint priceToPlay, address payable _factory, address _owner) public {
         owner = _owner;
-        factory = address(uint160(_factory));
+        factory = _factory;
         ticketPrice = priceToPlay;
-        minGuess = _minGuess;
-        maxGuess = _maxGuess;
     }
 
-    function play(uint guess) public payable {
-        require(msg.value == ticketPrice);
-        require(guess >= minGuess && guess <= maxGuess);
+    function play(uint8 guess) public payable {
+        require(closed == false);
+        require(msg.value > ticketPrice);
+        require(guess > 0 && guess < 10);
 
-        Player memory newPlayer = Player({
-            playerAddress : msg.sender,
-            guess : guess
-            });
-        playersCount++;
-        players.push(newPlayer);
+        playersByNumber[guess].push(msg.sender);
+        playerCount++;
     }
-    
+
     function pickWinner() public {
-        require(msg.sender == owner);
+        // require(msg.sender == owner);
+        // require(closed == false);
         // TODO get random number
-        uint rndNr = 4;
-        
-        for (uint i=0; i < players.length; i++) {
-            if (players[i].guess == rndNr) {
-                winners.push(players[i]);
-            }
-        }
-        
-        factory.transfer(address(this).balance);
-        if (winners.length >= 1) {
-            uint prizePerWinner = address(this).balance/winners.length; // prize  in Wei
-            for (uint i=0; i < winners.length; i++) {
-                winners[i].playerAddress.transfer(prizePerWinner);
-            }
-        } else {
+        uint8 rndNr = 4;
+
+        uint256 winnerCount = playersByNumber[rndNr].length;
+
+
+        if (winnerCount == 0) {
             factory.transfer(address(this).balance);
+        } else {
+            uint prize = address(this).balance / playersByNumber[rndNr].length;
+            for (uint i = 0; i < playersByNumber[rndNr].length; i++) {
+                playersByNumber[rndNr][i].transfer(prize);
+            }
         }
-        played = true;
+        closed = true;
     }
 
     function describeLottery() public view returns (
-        uint, uint, uint, uint, address
+        uint, uint, address, address
     ) {
         return (
-        playersCount,
+        playerCount,
         ticketPrice,
-        minGuess,
-        maxGuess,
-        owner
+        owner,
+        factory
         );
     }
 

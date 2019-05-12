@@ -28,4 +28,4 @@ deploy().catch(error => {
 });
 
 
-// to deploy run the following command: REACT_APP_ETH_ACCOUNT_SEED_WORDS='<ENTER_SEED_WORDS>' REACT_APP_ETH_REMOTE_NODE_URL='<ENTER_NODE_URL>' node ./ethereum/deploy.js
+// to deploy run the following command: REACT_APP_ETH_ACCOUNT_SEED_WORDS='<ENTER_SEED_WORDS>' REACT_APP_ETH_REMOTE_NODE_URL='<ENTER_NODE_URL>' node ./src/ethereum/deploy.js
