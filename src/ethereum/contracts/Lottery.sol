@@ -1,75 +1,78 @@
-pragma solidity >=0.4.22 <0.6.0;
+pragma solidity >= 0.5.0 < 0.6.0;
 
-contract LotteryFactory {
+contract Oracle {
 
-    address[] public lotteryAddresses;
-    mapping(address => Lottery) lotteryMapping;
-
-    function createLottery(uint priceToPlay) public {
-        Lottery newLottery = new Lottery(priceToPlay, address(uint160(address(this))), msg.sender);
-        lotteryAddresses.push(address(newLottery));
-        lotteryMapping[address(newLottery)] = newLottery;
-    }
-
-    function getDeployedLotteries() public view returns (address[] memory) {
-        return lotteryAddresses;
+    constructor() public { }
+    
+    function getRandom(uint range) public view returns (uint) {
+        return uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty)))%range;
     }
 }
 
+// TODO we could also deploy the oracle first and then reference it in the lottery with its contract ID.
+// Currently every lottery creates a new oracle contract.
 contract Lottery {
 
-    address public owner;
-    address payable public factory;
+    address payable public owner;
     uint public ticketPrice;
-    bool closed = false;
-    uint playerCount = 0;
+    uint public maxGuess;
+    uint public prize = 0;
+    uint latestWinnerCount = 0;
+    uint latestPrizePerWinner = 0;
+    uint16 maxGuessCount;
+    uint guessCount = 0;
+    mapping(uint => address payable[]) playersByGuess;
+    uint[] public guesses;
+    uint public winNr;
+    Oracle public oracle;
 
-    mapping(uint8 => address payable[]) playersByNumber;
-
-    constructor(uint priceToPlay, address payable _factory, address _owner) public {
-        owner = _owner;
-        factory = _factory;
-        ticketPrice = priceToPlay;
+    constructor(uint _ticketPrice, uint _maxGuess, uint16 _maxGuessCount) public {
+        owner = msg.sender;
+        ticketPrice = _ticketPrice;
+        maxGuess = _maxGuess;
+        maxGuessCount = _maxGuessCount;
+        oracle = new Oracle();
     }
-
+    
     function play(uint8 guess) public payable {
-        require(closed == false);
-        require(msg.value > ticketPrice);
-        require(guess > 0 && guess < 10);
-
-        playersByNumber[guess].push(msg.sender);
-        playerCount++;
+        require(msg.value >= ticketPrice);
+        require(guessCount < maxGuessCount);
+        require(guess <= maxGuess);
+      
+      
+      playersByGuess[guess].push(msg.sender);
+      guesses.push(guess);
+      guessCount++;
     }
-
+    
     function pickWinner() public {
-        // require(msg.sender == owner);
-        // require(closed == false);
-        // TODO get random number
-        uint8 rndNr = 4;
+        require(msg.sender == owner);
 
-        uint256 winnerCount = playersByNumber[rndNr].length;
+        winNr = oracle.getRandom(maxGuess);
 
-
-        if (winnerCount == 0) {
-            factory.transfer(address(this).balance);
-        } else {
-            uint prize = address(this).balance / playersByNumber[rndNr].length;
-            for (uint i = 0; i < playersByNumber[rndNr].length; i++) {
-                playersByNumber[rndNr][i].transfer(prize);
+        latestWinnerCount = playersByGuess[winNr].length;
+        if (latestWinnerCount != 0) {
+            latestPrizePerWinner = address(this).balance / playersByGuess[winNr].length;
+            for (uint i = 0; i < playersByGuess[winNr].length; i++) {
+                playersByGuess[winNr][i].transfer(latestPrizePerWinner);
             }
         }
-        closed = true;
+        for (uint i = 0; i < guesses.length; i++) {
+            delete playersByGuess[guesses[i]];
+        }
+        guessCount = 0;
+        delete guesses;
     }
 
     function describeLottery() public view returns (
-        uint, uint, address, address
+        uint, uint, uint, uint, address
     ) {
         return (
-        playerCount,
+        guessCount,
+        address(this).balance,
         ticketPrice,
-        owner,
-        factory
+        winNr,
+        owner
         );
     }
-
 }
