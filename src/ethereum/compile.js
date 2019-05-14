@@ -8,7 +8,17 @@ fs.removeSync(buildPath);
 const lotteryPath = path.resolve(__dirname, 'contracts', 'Lottery.sol');
 
 const source = fs.readFileSync(lotteryPath, 'utf8');
-const output = solc.compile(source, 1).contracts;
+let output = null;
+
+
+(function () {
+    try {
+        output = solc.compile(source, 1).contracts;
+    } catch (e) {
+        console.error("Error while compiling: ", e);
+    }
+})();
+
 
 fs.ensureDirSync(buildPath);
 
