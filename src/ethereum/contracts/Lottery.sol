@@ -1,27 +1,33 @@
 pragma solidity ^0.4.17;
 
+///////////////////////////////////////////////////////////////////////
+// The LotteryFactory is the contract that manages all the Lotteries
+// it manages the funds and acts as a
+// proxy between the players and the lotteries
+///////////////////////////////////////////////////////////////////////
 contract LotteryFactory {
 
-    address public manager;
-    uint public ticketPrice;
-    uint public maxNum;
-    address[] public lotteryAddresses;
-    Lottery public currentLottery = Lottery(address(0x0));
-    RandomNumberOracle public randomNumberGenerator = RandomNumberOracle(address(0x0));
+    address manager;
+    uint ticketPrice;
+    uint maxGuessNumber;
+    address[] allLotteries;
+    Lottery currentLottery = Lottery(address(0x0));
+    RandomNumberOracle randomNumberGenerator = RandomNumberOracle(address(0x0));
 
-    constructor(uint _ticketPrice, uint _maxNum) public {
+    constructor(uint _ticketPrice, uint _maxGuessNumber) public {
         manager = msg.sender;
         ticketPrice = _ticketPrice;
-        maxNum = _maxNum;
-        createRandomNumberOracle();
-        createLottery(ticketPrice, maxNum);
+        maxGuessNumber = _maxGuessNumber;
+        createRandomNumberGenerator();
+        // create a new lottery immediately after the factory is created
+        currentLottery = new Lottery(_ticketPrice, address(this), address(randomNumberGenerator), maxGuessNumber);
+        allLotteries.push(address(currentLottery));
     }
 
-    function createLottery(uint priceToPlay, uint maxNum) private {
-        require(randomNumberGenerator != RandomNumberOracle(address(0x0)), "You have to initialize the random number generator first.");
-        require(currentLottery == Lottery(address(0x0)), "You have a lottery running");
-        currentLottery = new Lottery(priceToPlay, address(this), address(randomNumberGenerator), maxNum);
-        lotteryAddresses.push(address(currentLottery));
+    function play(uint8 guess) public payable {
+        require(currentLottery != Lottery(address(0x0)), "There is no lottery running.");
+        require(msg.value >= currentLottery.getTicketPrice(), "You have to send enough money.");
+        currentLottery.play(guess, msg.sender);
     }
 
     function pickWinner() public {
@@ -33,35 +39,49 @@ contract LotteryFactory {
                 winners[i].transfer(prize);
             }
         }
-        currentLottery = new Lottery(ticketPrice, address(this), address(randomNumberGenerator), maxNum);
-        lotteryAddresses.push(address(currentLottery));
-        // createLottery(ticketPrice, maxNum);
+        // creating a new round immediately after the winner is selected
+        currentLottery = new Lottery(ticketPrice, address(this), address(randomNumberGenerator), maxGuessNumber);
+        allLotteries.push(address(currentLottery));
     }
 
-    function play(uint8 guess) public payable {
-        require(currentLottery != Lottery(address(0x0)), "There is no lottery running.");
-        require(msg.value >= currentLottery.getTicketPrice(), "You have to send enough money.");
 
-        currentLottery.play(guess, msg.sender);
-    }
-
-    function createRandomNumberOracle() private {
+    function createRandomNumberGenerator() private {
         randomNumberGenerator = new RandomNumberOracle();
     }
 
-    function getDeployedLotteries() public view returns (address[]) {
-        return lotteryAddresses;
+    function describeFactory() public view returns (
+        address, uint, uint, address, address[], address
+    ) {
+        return (
+        manager,
+        ticketPrice,
+        maxGuessNumber,
+        currentLottery,
+        allLotteries,
+        randomNumberGenerator
+        );
     }
+
 }
 
+
+///////////////////////////////////////////////////////////////////////
+// The Lottery is created and managed by the factory
+// it keeps the basic data such as players by numbers,
+// total players cound, the methods play and pick winner
+// can just be called from its factory and only if it is not closed;
+// once the winner is picked, its variable closed is set to true and
+// a new lottery will be created by the factory. It is done like that
+// so we keep the history of all the lotteries ever deployed.
+///////////////////////////////////////////////////////////////////////
 contract Lottery {
 
-    address public factory;
-    uint public ticketPrice;
-    bool public closed = false;
-    uint public playerCount = 0;
-    uint public maxNum;
-    uint public winNumber;
+    address factory;
+    uint ticketPrice;
+    bool closed = false;
+    uint playerCount = 0;
+    uint maxNum;
+    uint winNumber;
 
     RandomNumberOracle public randomNumberGenerator = RandomNumberOracle(address(0x0));
 
@@ -93,7 +113,7 @@ contract Lottery {
         return (ticketPrice);
     }
 
-    function getPlayersByNum(uint num) public view returns (address[]) {
+    function getPlayersByGuessNum(uint num) public view returns (address[]) {
         return playersByNumber[num];
     }
 
@@ -109,13 +129,11 @@ contract Lottery {
         playersByNumber[winNumber]
         );
     }
+
 }
 
 contract RandomNumberOracle {
-
-    constructor() public {}
-
     function getRandom(uint range) public view returns (uint) {
-        return 1;
+        return uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty))) % range;
     }
 }
