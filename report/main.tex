@@ -1,0 +1,48 @@
+\documentclass[12pt,a4paper,english,oneside]{book}
+\usepackage[english]{babel}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{graphics, graphicx,wrapfig}
+\usepackage{fancybox}
+\usepackage{ae}
+\usepackage{float}
+\usepackage{url}
+\usepackage{unizhdt}
+
+\selectlanguage{english}
+\pagestyle{headings}
+
+\begin{document}
+
+\author{Danijel Dordevic, Ratanak Hy, Claude Muller, Lucas Thorbecke}
+\authorcity{Z\"urich, Switzerland}
+\studentid{..., ..., 11-067-675, ...}
+\title{Challenge Task: Decentralized Lottery Application}
+\subtitle{Blockchain and Overlay Networks}
+\submissiondate{May 22, 2019}
+
+%---------- FRONT MATTER
+\maketitle
+\pagenumbering{arabic}
+% \pagenumbering{roman}
+\tableofcontents
+
+%---------- BODY
+\include{introduction}
+\include{design_and_implementation}
+
+%---------- BACK MATTER
+% {\singlespace
+% Making the references a "part" rather than a chapter gets it indented at
+% level -1 according to the chart: top of page 4 of the document at
+% ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/tocloft/tocloft.pdf
+\addcontentsline{toc}{part}{REFERENCES}
+% \bibliographystyle{asudis}
+% \bibliography{dis}}
+\renewcommand{\chaptername}{APPENDIX}
+\include{vita}
+
+\end{document}
