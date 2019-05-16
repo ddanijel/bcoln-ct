@@ -5,13 +5,13 @@ import classNames from 'classnames';
 import {withStyles} from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import Collapse from "@material-ui/core/Collapse";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import web3 from './../ethereum/web3';
 import MenuItem from "@material-ui/core/MenuItem";
 import {playLottery} from "../store/actions/factoryActionCreators";
+import {loadActiveLottery} from "../store/actions/lotteryActionCreators";
 
 
 const styles = theme => ({
@@ -39,6 +39,11 @@ class FactoryPanel extends Component {
         selectGuessNumberError: false
     };
 
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (this.props.factory.currentLottery === null && nextProps.factory.currentLottery !== null) {
+            this.props.loadActiveLottery(nextProps.factory.currentLottery);
+        }
+    }
 
     handleChange = name => event => {
         this.setState({[name]: event.target.value});
@@ -116,11 +121,16 @@ class FactoryPanel extends Component {
                             Play
                         </Button>
                     </form>
-                    <Collapse in={true} timeout="auto" unmountOnExit>
+                    <Paper className={classes.root} elevation={1}>
                         <Typography variant="h5" component="h3">
-                            Here you can find some details about the lottery...
+                            Lottery Details
                         </Typography>
-                    </Collapse>
+                    </Paper>
+                    {/*<Collapse in={true} timeout="auto" unmountOnExit>*/}
+                    {/*    <Typography variant="h5" component="h3">*/}
+                    {/*        Here you can find some details about the lottery...*/}
+                    {/*    </Typography>*/}
+                    {/*</Collapse>*/}
                 </Paper>
             </div>
         );
@@ -139,7 +149,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onPlayLotteryPressed: (ticketPrice, guessNumber) => dispatch(playLottery(ticketPrice, guessNumber))
+        onPlayLotteryPressed: (ticketPrice, guessNumber) => dispatch(playLottery(ticketPrice, guessNumber)),
+        loadActiveLottery: address => dispatch(loadActiveLottery(address))
     }
 };
 
