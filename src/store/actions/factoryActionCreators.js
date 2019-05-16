@@ -21,7 +21,7 @@ export const loadFactory = () => {
 export const setFactory = factoryDetails => {
     const factory = {
         manager: factoryDetails[0],
-        ticketPrice: web3.utils.hexToNumber(factoryDetails[1]),
+        ticketPrice: web3.utils.fromWei(String(factoryDetails[1]), 'ether'),
         maxGuessNumber: web3.utils.hexToNumber(factoryDetails[2]),
         currentLottery: factoryDetails[3],
         allLotteries: factoryDetails[4],
@@ -42,7 +42,7 @@ export const playLottery = (ticketPrice, guessNumber) => {
             LotteryFactory.methods.play(guessNumber).send(
                 {
                     from: accounts[0],
-                    value: web3.utils.toWei(String(ticketPrice), 'wei')
+                    value: web3.utils.toWei(String(ticketPrice), 'ether')
                 }
             )
                 .on('error', (error) => {

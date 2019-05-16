@@ -8,7 +8,6 @@ import Typography from '@material-ui/core/Typography';
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import web3 from './../ethereum/web3';
 import MenuItem from "@material-ui/core/MenuItem";
 import {playLottery} from "../store/actions/factoryActionCreators";
 import {loadActiveLottery} from "../store/actions/lotteryActionCreators";
@@ -85,7 +84,7 @@ class FactoryPanel extends Component {
                                 className={classNames(classes.margin, classes.textField)}
                                 variant="outlined"
                                 // label="Ticket Price"
-                                value={web3.utils.fromWei(String(this.props.factory.ticketPrice), 'ether')}
+                                value={this.props.factory.ticketPrice}
                                 fullWidth
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">Ticket Price</InputAdornment>,
