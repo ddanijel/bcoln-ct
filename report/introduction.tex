@@ -1,0 +1,20 @@
+\chapter{Introduction}
+
+To get hands on experience with decentralized applications a Lottery system was
+implemented. The requirements were the following.
+\begin{itemize}
+    \item The lottery system must run entirely within one or more Smart
+    Contracts (SC).
+    \item For determining a winner a random number generator oracle must be
+    implemented an run in a separate SC than the lottery. Though, the random
+    numbers can be generated either on the blockchain or externally.
+    \item The lottery SC must automatically pay the prize to the winner, divide
+    the prize in case of multiple winners, or accumulate the prize for the next
+    lottery round in case of no winners. 
+\end{itemize}
+
+The lottery was realized on the Ethereum blockchain with the Solidity
+programming language. Furthermore, a front-end for convenient interaction with
+the lottery was implemented using JavaScript and React\footnote{\url{https://reactjs.org/}}. 
+
+The source code can be found at \url{https://github.com/ddanijel/bcoln-ct}.

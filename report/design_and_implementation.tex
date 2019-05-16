@@ -1,0 +1,80 @@
+\chapter{Design and Implementation}
+
+%% TODO [Ratanak]: Create a class diagram ;P
+
+%% TODO: How does the front-end interact with the blockchain?
+
+The exact mechanisms of a lottery can be implemented in many ways. The following
+describes the design choices made in this work.
+
+The most important concept is that there is not only a single lottery contract
+but rather one contract for each round of the lottery. One round consists of
+players betting and the picking of a winner. After a winner has been chosen the
+specific lottery is closed and a new lottery is deployed. The lotteries are
+controlled via a central lottery factory that spawns new lotteries, knows of the
+current active lottery, and is the interface by which the lottery issuer can
+manage the lottery flow and the players can set there bets.
+The advantage of this design is that each lottery round is retrievable by its own
+address and the factory can be queried for the list of all past lotteries. This
+seems more convenient than the case in which only one lottery is reused for each
+round. We can avoid having to scan through the blockchain to retrieve the
+transaction history of the lottery and reconstruct its intermediary states.
+
+Other design decisions are:
+\begin{itemize}
+  \item A player can bet multiple times on the same or different numbers in a
+  single lottery round.
+  \item The lottery issuer sets a ticket price which is the minimum price a player
+  has to pay for his bet. The system does not prevent the player to pay more,
+  but he does not get any benefits from it.
+  \item The issuer of the lottery factory sets the number range by providing a
+  maximum number that can be bet.
+\end{itemize}
+
+%% TODO: Describe the code
+
+\begin{Verbatim}[fontsize=\small]
+contract LotteryFactory {
+
+    address manager;
+    uint ticketPrice;
+    uint maxGuessNumber;
+    address[] allLotteries;
+    Lottery currentLottery = Lottery(address(0x0));
+    RandomNumberOracle randomNumberGenerator = RandomNumberOracle(address(0x0));
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\small]
+constructor(uint _ticketPrice, uint _maxGuessNumber) public {
+    manager = msg.sender;
+    ticketPrice = _ticketPrice;
+    maxGuessNumber = _maxGuessNumber;
+    randomNumberGenerator = new RandomNumberOracle();
+    currentLottery = new Lottery(_ticketPrice, address(this), address(randomNumberGenerator), maxGuessNumber);
+    allLotteries.push(address(currentLottery));
+}
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\small]
+    function play(uint8 guess) public payable {
+        require(currentLottery != Lottery(address(0x0)), "There is no lottery running.");
+        require(msg.value >= currentLottery.getTicketPrice(), "You have to send enough money.");
+        currentLottery.play(guess, msg.sender);
+    }
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\small]
+    function pickWinner() public {
+        require(msg.sender == manager, "You are not authorized.");
+        address[] memory winners = currentLottery.pickWinner(address(this));
+        if (winners.length != 0) {
+            uint prize = address(this).balance / winners.length;
+            for (uint i = 0; i < winners.length; i++) {
+                winners[i].transfer(prize);
+            }
+        }
+        // creating a new round immediately after the winner is selected
+        currentLottery = new Lottery(ticketPrice, address(this), address(randomNumberGenerator), maxGuessNumber);
+        allLotteries.push(address(currentLottery));
+    }
+\end{Verbatim}
