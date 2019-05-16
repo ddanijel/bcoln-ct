@@ -35,7 +35,8 @@ const styles = theme => ({
 
 class FactoryPanel extends Component {
     state = {
-        guessNumber: -1
+        guessNumber: -1,
+        selectGuessNumberError: false
     };
 
 
@@ -44,9 +45,16 @@ class FactoryPanel extends Component {
     };
 
     handlePlayLotteryPressed = () => {
-        const ticketPrice = this.props.factory.ticketPrice;
-        const guessNumber = this.state.guessNumber;
-        this.props.onPlayLotteryPressed(ticketPrice, guessNumber);
+        const {guessNumber} = this.state;
+        const {maxGuessNumber} = this.props.factory;
+
+        if (guessNumber <= maxGuessNumber && guessNumber >= 0) {
+            this.setState({selectGuessNumberError: false});
+            const ticketPrice = this.props.factory.ticketPrice;
+            this.props.onPlayLotteryPressed(ticketPrice, guessNumber);
+        } else {
+            this.setState({selectGuessNumberError: true});
+        }
     };
 
 
@@ -89,6 +97,7 @@ class FactoryPanel extends Component {
                                 variant="outlined"
                                 // label="With Select"
                                 value={this.state.guessNumber}
+                                error={this.state.selectGuessNumberError}
                                 onChange={this.handleChange('guessNumber')}
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">Guess Number</InputAdornment>,
