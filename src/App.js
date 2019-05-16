@@ -1,20 +1,36 @@
 import React, {Component} from 'react';
 import AppBar from './components/AppBar';
-import LotteriesTable from './components/LotteriesTable'
-import CreateLotteryDialog from "./components/CreateLotteryDialog";
-import PlayLotteryDialog from "./components/PlayLotteryDialog";
+import FactoryPanel from './components/factoryPanel';
+// import LotteriesTable from './components/LotteriesTable'
+// import CreateLotteryDialog from "./components/CreateLotteryDialog";
+// import PlayLotteryDialog from "./components/PlayLotteryDialog";
+import {loadFactory} from "./store/actions/factoryActionCreators";
+import {connect} from "react-redux";
 
 class App extends Component {
+
+    componentDidMount() {
+        this.props.onAppOpen();
+    }
+
     render() {
         return (
             <div className="App">
                 <AppBar/>
-                <LotteriesTable/>
-                <CreateLotteryDialog/>
-                <PlayLotteryDialog/>
+                <FactoryPanel/>
+                {/*<LotteriesTable/>*/}
+                {/*<CreateLotteryDialog/>*/}
+                {/*<PlayLotteryDialog/>*/}
             </div>
         );
     }
 }
 
-export default App;
+const mapDispatchToProps = dispatch => {
+    return {
+        onAppOpen: () => dispatch(loadFactory())
+    }
+};
+
+
+export default connect(null, mapDispatchToProps)(App);

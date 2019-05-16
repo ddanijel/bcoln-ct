@@ -8,7 +8,6 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import {connect} from "react-redux";
-import {uiOpenCreateLotteryDialog} from "../store/actions/uiActionCreators";
 
 
 const styles = {
@@ -40,7 +39,7 @@ function ButtonAppBar(props) {
                         Blockchain Lottery
                     </Typography>
                     <Button
-                        onClick={() => props.onOpenCreateLotteryDialog()}
+                        // onClick={() => props.onOpenCreateLotteryDialog()}
                         color="inherit">Create Lottery</Button>
                 </Toolbar>
             </AppBar>
@@ -54,7 +53,7 @@ ButtonAppBar.propTypes = {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onOpenCreateLotteryDialog: () => dispatch(uiOpenCreateLotteryDialog())
+        // onOpenCreateLotteryDialog: () => dispatch(uiOpenCreateLotteryDialog())
     }
 };
 

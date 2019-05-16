@@ -1,13 +1,15 @@
 import thunk from "redux-thunk";
 import {applyMiddleware, combineReducers, compose, createStore} from "redux";
 
+import factoryReducer from './reducers/factoryReducer';
 import lotteryReducer from './reducers/lotteryReducer';
 import uiReducer from './reducers/uiReducer';
 
 
 const rootReducer = combineReducers({
-    ui: uiReducer,
-    lottery: lotteryReducer
+    factory: factoryReducer,
+    lottery: lotteryReducer,
+    ui: uiReducer
 
 });
 
