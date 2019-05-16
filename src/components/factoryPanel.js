@@ -27,6 +27,7 @@ const styles = theme => ({
     textField: {
         marginLeft: theme.spacing.unit,
         marginRight: theme.spacing.unit,
+        marginTop: theme.spacing.unit,
         width: 200,
     },
 });
@@ -54,7 +55,7 @@ class FactoryPanel extends Component {
 
         const guessNumbers = [];
         for (let i = 0; i <= this.props.factory.maxGuessNumber; i++) {
-            guessNumbers.push({value: i, label: i})
+            guessNumbers.push({value: i, label: String("  " + i)})
         }
 
         return (
@@ -63,43 +64,49 @@ class FactoryPanel extends Component {
                     <Typography variant="h5" component="h3">
                         Play the lottery
                     </Typography>
-                    <TextField
-                        disabled
-                        id="ticket"
-                        className={classNames(classes.margin, classes.textField)}
-                        variant="outlined"
-                        // label="Ticket Price"
-                        value={web3.utils.fromWei(String(this.props.factory.ticketPrice), 'ether')}
-                        fullWidth
-                        InputProps={{
-                            startAdornment: <InputAdornment position="start">Ticket Price</InputAdornment>,
-                            endAdornment: <InputAdornment position="start">ETH</InputAdornment>,
-                        }}
-                        style={{width: '250px'}}
-                    />
+                    <form action="">
+                        <div>
+                            <TextField
+                                disabled
+                                id="ticket"
+                                className={classNames(classes.margin, classes.textField)}
+                                variant="outlined"
+                                // label="Ticket Price"
+                                value={web3.utils.fromWei(String(this.props.factory.ticketPrice), 'ether')}
+                                fullWidth
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">Ticket Price</InputAdornment>,
+                                    endAdornment: <InputAdornment position="start">ETH</InputAdornment>,
+                                }}
+                                style={{width: '250px'}}
+                            />
+                        </div>
 
-                    <TextField
-                        select
-                        className={classNames(classes.margin, classes.textField)}
-                        variant="outlined"
-                        // label="With Select"
-                        value={this.state.guessNumber}
-                        onChange={this.handleChange('guessNumber')}
-                        InputProps={{
-                            startAdornment: <InputAdornment position="start">Guess Number</InputAdornment>,
-                        }}
-                        style={{width: '150px'}}
-                    >
-                        {guessNumbers.map(option => (
-                            <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                            </MenuItem>
-                        ))}
-                    </TextField>
+                        <div>
+                            <TextField
+                                select
+                                className={classNames(classes.margin, classes.textField)}
+                                variant="outlined"
+                                // label="With Select"
+                                value={this.state.guessNumber}
+                                onChange={this.handleChange('guessNumber')}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">Guess Number</InputAdornment>,
+                                }}
+                                style={{width: '150px', fontWeight: 'bold'}}
+                            >
+                                {guessNumbers.map(option => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </div>
 
-                    <Button variant="outlined" className={classes.button} onClick={this.handlePlayLotteryPressed}>
-                        Play
-                    </Button>
+                        <Button variant="outlined" className={classes.button} onClick={this.handlePlayLotteryPressed}>
+                            Play
+                        </Button>
+                    </form>
                     <Collapse in={true} timeout="auto" unmountOnExit>
                         <Typography variant="h5" component="h3">
                             Here you can find some details about the lottery...

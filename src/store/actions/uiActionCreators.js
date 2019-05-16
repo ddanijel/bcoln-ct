@@ -10,7 +10,6 @@ import {setActiveLottery} from "./lotteryActionCreators";
 
 
 export const uiStartLoading = () => {
-    console.log('start loading called');
     return {
         type: UI_START_LOADING_ACTION
     };
@@ -18,7 +17,6 @@ export const uiStartLoading = () => {
 
 
 export const uiStopLoading = () => {
-    console.log('stop loading called');
     return {
         type: UI_STOP_LOADING_ACTION
     };

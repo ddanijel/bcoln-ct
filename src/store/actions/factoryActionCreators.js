@@ -35,21 +35,31 @@ export const setFactory = factoryDetails => {
 
 
 export const playLottery = (ticketPrice, guessNumber) => {
-    return async dispatch => {
+    return dispatch => {
         dispatch(uiStartLoading());
-        try {
-            console.log("price: ", ticketPrice, "num: ", guessNumber);
-
-            const accounts = await web3.eth.getAccounts();
-            await LotteryFactory.methods.play(guessNumber).send(
+        let confirmed = false;
+        web3.eth.getAccounts().then(accounts => {
+            LotteryFactory.methods.play(guessNumber).send(
                 {
                     from: accounts[0],
                     value: web3.utils.toWei(String(ticketPrice), 'wei')
                 }
-            );
-        } catch (e) {
-            dispatch(uiStopLoading());
-            console.error("Error while playing the lottery: ", e);
-        }
+            )
+                .on('error', (error) => {
+                    dispatch(uiStopLoading());
+                    console.log('Error while playing the lottery: ', error)
+                })
+                .on('confirmation', confirmationNumber => {
+                    // no idea why this is called several times so had to put a flag to call onSuccess only once...
+                    console.log('confirmationNumber: ', confirmationNumber);
+                    if (!confirmed) {
+                        confirmed = true;
+                        dispatch(uiStopLoading());
+                    }
+                });
+        });
+
     }
+
+
 };
