@@ -69,3 +69,27 @@ export const onPlayedLottery = confirmationNumber => {
         confirmationNumber
     }
 };
+
+export const pickWinner = () => {
+    return dispatch => {
+        dispatch(uiStartLoading());
+        let confirmed = false;
+        web3.eth.getAccounts().then(accounts => {
+            LotteryFactory.methods.pickWinner().send(
+                {
+                    from: accounts[0]
+                }
+            )
+                .on('error', (error) => {
+                    dispatch(uiStopLoading());
+                    console.log('Error while picking the winner: ', error)
+                })
+                .on('confirmation', () => {
+                    if (!confirmed) {
+                        confirmed = true;
+                        dispatch(uiStopLoading());
+                    }
+                });
+        });
+    }
+};

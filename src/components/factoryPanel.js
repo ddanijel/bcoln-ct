@@ -9,7 +9,7 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import MenuItem from "@material-ui/core/MenuItem";
-import {playLottery} from "../store/actions/factoryActionCreators";
+import {pickWinner, playLottery} from "../store/actions/factoryActionCreators";
 import {loadActiveLottery} from "../store/actions/lotteryActionCreators";
 import LotteryDetails from "./CurrentLotteryDetails";
 import web3 from '../ethereum/web3'
@@ -80,7 +80,7 @@ class FactoryPanel extends Component {
     };
 
     handlePickWinnerPressed = () => {
-        console.log('pick winner pressed');
+        this.props.pickWinner();
     };
 
 
@@ -174,7 +174,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         onPlayLotteryPressed: (ticketPrice, guessNumber) => dispatch(playLottery(ticketPrice, guessNumber)),
-        loadActiveLottery: address => dispatch(loadActiveLottery(address))
+        loadActiveLottery: address => dispatch(loadActiveLottery(address)),
+        pickWinner: () => dispatch(pickWinner())
     }
 };
 
