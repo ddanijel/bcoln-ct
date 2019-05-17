@@ -11,6 +11,8 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import MenuItem from "@material-ui/core/MenuItem";
 import {playLottery} from "../store/actions/factoryActionCreators";
 import {loadActiveLottery} from "../store/actions/lotteryActionCreators";
+import LotteryDetails from "./CurrentLotteryDetails";
+import web3 from '../ethereum/web3'
 
 
 const styles = theme => ({
@@ -35,11 +37,16 @@ const styles = theme => ({
 class FactoryPanel extends Component {
     state = {
         guessNumber: -1,
-        selectGuessNumberError: false
+        selectGuessNumberError: false,
+        showPickWinnerButton: false
     };
 
     componentWillReceiveProps(nextProps, nextContext) {
         if (this.props.factory.currentLottery === null && nextProps.factory.currentLottery !== null) {
+            this.props.loadActiveLottery(nextProps.factory.currentLottery);
+            this.shouldShowPickWinnerButton();
+        }
+        if (this.props.factory.confirmationNumber !== nextProps.factory.confirmationNumber) {
             this.props.loadActiveLottery(nextProps.factory.currentLottery);
         }
     }
@@ -61,6 +68,21 @@ class FactoryPanel extends Component {
         }
     };
 
+    shouldShowPickWinnerButton = () => {
+        // we show the pick winner button just in case we are the manager of the factory
+        web3.eth.getAccounts()
+            .then(accounts => {
+                this.setState({
+                    ...this.state,
+                    showPickWinnerButton: this.props.factory.manager === accounts[0]
+                })
+            })
+    };
+
+    handlePickWinnerPressed = () => {
+        console.log('pick winner pressed');
+    };
+
 
     render() {
         const {classes} = this.props;
@@ -76,8 +98,7 @@ class FactoryPanel extends Component {
                     <Typography variant="h5" component="h3">
                         Play the lottery
                     </Typography>
-                    <form action="">
-                        <div>
+                    <div style={{width: '100%'}}>
                             <TextField
                                 disabled
                                 id="ticket"
@@ -90,11 +111,8 @@ class FactoryPanel extends Component {
                                     startAdornment: <InputAdornment position="start">Ticket Price</InputAdornment>,
                                     endAdornment: <InputAdornment position="start">ETH</InputAdornment>,
                                 }}
-                                style={{width: '250px'}}
+                                style={{width: '90%'}}
                             />
-                        </div>
-
-                        <div>
                             <TextField
                                 select
                                 className={classNames(classes.margin, classes.textField)}
@@ -114,22 +132,28 @@ class FactoryPanel extends Component {
                                     </MenuItem>
                                 ))}
                             </TextField>
-                        </div>
 
                         <Button variant="outlined" className={classes.button} onClick={this.handlePlayLotteryPressed}>
                             Play
                         </Button>
-                    </form>
+
+                        {
+                            this.state.showPickWinnerButton ?
+                                <Button variant="outlined" className={classes.button}
+                                        onClick={this.handlePickWinnerPressed}>
+                                    Pick Winner
+                                </Button>
+                                : null
+                        }
+
+                    </div>
                     <Paper className={classes.root} elevation={1}>
                         <Typography variant="h5" component="h3">
                             Lottery Details
                         </Typography>
+                        {this.props.currentLottery ? <LotteryDetails lottery={this.props.currentLottery}/> : null}
                     </Paper>
-                    {/*<Collapse in={true} timeout="auto" unmountOnExit>*/}
-                    {/*    <Typography variant="h5" component="h3">*/}
-                    {/*        Here you can find some details about the lottery...*/}
-                    {/*    </Typography>*/}
-                    {/*</Collapse>*/}
+
                 </Paper>
             </div>
         );
@@ -142,7 +166,8 @@ FactoryPanel.propTypes = {
 
 const mapStateToProps = state => {
     return {
-        factory: state.factory
+        factory: state.factory,
+        currentLottery: state.lottery.activeLottery
     };
 };
 

@@ -1,4 +1,4 @@
-import {SET_FACTORY_ACTION} from '../actions/actionTypes';
+import {ON_PLAYED_LOTTERY_ACTION, SET_FACTORY_ACTION} from '../actions/actionTypes';
 
 const initialState = {
     manager: null,
@@ -6,7 +6,8 @@ const initialState = {
     maxGuessNumber: null,
     currentLottery: null,
     allLotteries: [],
-    randomNumberGenerator: null
+    randomNumberGenerator: null,
+    confirmationNumber: Math.random()
 };
 
 const reducer = (state = initialState, action) => {
@@ -28,6 +29,11 @@ const reducer = (state = initialState, action) => {
                 currentLottery,
                 allLotteries,
                 randomNumberGenerator
+            };
+        case ON_PLAYED_LOTTERY_ACTION:
+            return {
+                ...state,
+                confirmationNumber: action.confirmationNumber
             };
         default:
             return state;

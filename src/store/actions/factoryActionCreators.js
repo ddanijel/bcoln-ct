@@ -1,4 +1,4 @@
-import {SET_FACTORY_ACTION} from './actionTypes';
+import {ON_PLAYED_LOTTERY_ACTION, SET_FACTORY_ACTION} from './actionTypes';
 import {uiStartLoading, uiStopLoading} from "./uiActionCreators";
 import LotteryFactory from "../../ethereum/lotteryFactory";
 import web3 from "../../ethereum/web3";
@@ -54,12 +54,18 @@ export const playLottery = (ticketPrice, guessNumber) => {
                     console.log('confirmationNumber: ', confirmationNumber);
                     if (!confirmed) {
                         confirmed = true;
+                        dispatch(onPlayedLottery(confirmationNumber));
                         dispatch(uiStopLoading());
                     }
                 });
         });
 
     }
+};
 
-
+export const onPlayedLottery = confirmationNumber => {
+    return {
+        type: ON_PLAYED_LOTTERY_ACTION,
+        confirmationNumber
+    }
 };
