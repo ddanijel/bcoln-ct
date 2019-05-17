@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import {connect} from "react-redux";
+import ProgressBar from "./ProgressBar";
 
 
 const styles = {
@@ -43,12 +44,19 @@ function ButtonAppBar(props) {
                         color="inherit">Create Lottery</Button>
                 </Toolbar>
             </AppBar>
+            {props.isLoading ? <ProgressBar/> : null}
         </div>
     );
 }
 
 ButtonAppBar.propTypes = {
     classes: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = state => {
+    return {
+        isLoading: state.ui.isLoading
+    };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -58,4 +66,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 
-export default connect(null, mapDispatchToProps)(withStyles(styles)(ButtonAppBar));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ButtonAppBar));

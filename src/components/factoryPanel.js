@@ -5,13 +5,14 @@ import classNames from 'classnames';
 import {withStyles} from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import Collapse from "@material-ui/core/Collapse";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import web3 from './../ethereum/web3';
 import MenuItem from "@material-ui/core/MenuItem";
-import {playLottery} from "../store/actions/factoryActionCreators";
+import {pickWinner, playLottery} from "../store/actions/factoryActionCreators";
+import {loadActiveLottery} from "../store/actions/lotteryActionCreators";
+import LotteryDetails from "./CurrentLotteryDetails";
+import web3 from '../ethereum/web3'
 
 
 const styles = theme => ({
@@ -27,6 +28,7 @@ const styles = theme => ({
     textField: {
         marginLeft: theme.spacing.unit,
         marginRight: theme.spacing.unit,
+        marginTop: theme.spacing.unit,
         width: 200,
     },
 });
@@ -34,18 +36,51 @@ const styles = theme => ({
 
 class FactoryPanel extends Component {
     state = {
-        guessNumber: -1
+        guessNumber: -1,
+        selectGuessNumberError: false,
+        showPickWinnerButton: false
     };
 
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (this.props.factory.currentLottery === null && nextProps.factory.currentLottery !== null) {
+            this.props.loadActiveLottery(nextProps.factory.currentLottery);
+            this.shouldShowPickWinnerButton();
+        }
+        if (this.props.factory.confirmationNumber !== nextProps.factory.confirmationNumber) {
+            this.props.loadActiveLottery(nextProps.factory.currentLottery);
+        }
+    }
 
     handleChange = name => event => {
         this.setState({[name]: event.target.value});
     };
 
     handlePlayLotteryPressed = () => {
-        const ticketPrice = this.props.factory.ticketPrice;
-        const guessNumber = this.state.guessNumber;
-        this.props.onPlayLotteryPressed(ticketPrice, guessNumber);
+        const {guessNumber} = this.state;
+        const {maxGuessNumber} = this.props.factory;
+
+        if (guessNumber <= maxGuessNumber && guessNumber >= 0) {
+            this.setState({selectGuessNumberError: false});
+            const ticketPrice = this.props.factory.ticketPrice;
+            this.props.onPlayLotteryPressed(ticketPrice, guessNumber);
+        } else {
+            this.setState({selectGuessNumberError: true});
+        }
+    };
+
+    shouldShowPickWinnerButton = () => {
+        // we show the pick winner button just in case we are the manager of the factory
+        web3.eth.getAccounts()
+            .then(accounts => {
+                this.setState({
+                    ...this.state,
+                    showPickWinnerButton: this.props.factory.manager === accounts[0]
+                })
+            })
+    };
+
+    handlePickWinnerPressed = () => {
+        this.props.pickWinner();
     };
 
 
@@ -54,7 +89,7 @@ class FactoryPanel extends Component {
 
         const guessNumbers = [];
         for (let i = 0; i <= this.props.factory.maxGuessNumber; i++) {
-            guessNumbers.push({value: i, label: i})
+            guessNumbers.push({value: i, label: String("  " + i)})
         }
 
         return (
@@ -63,48 +98,62 @@ class FactoryPanel extends Component {
                     <Typography variant="h5" component="h3">
                         Play the lottery
                     </Typography>
-                    <TextField
-                        disabled
-                        id="ticket"
-                        className={classNames(classes.margin, classes.textField)}
-                        variant="outlined"
-                        // label="Ticket Price"
-                        value={web3.utils.fromWei(String(this.props.factory.ticketPrice), 'ether')}
-                        fullWidth
-                        InputProps={{
-                            startAdornment: <InputAdornment position="start">Ticket Price</InputAdornment>,
-                            endAdornment: <InputAdornment position="start">ETH</InputAdornment>,
-                        }}
-                        style={{width: '250px'}}
-                    />
+                    <div style={{width: '100%'}}>
+                            <TextField
+                                disabled
+                                id="ticket"
+                                className={classNames(classes.margin, classes.textField)}
+                                variant="outlined"
+                                // label="Ticket Price"
+                                value={this.props.factory.ticketPrice}
+                                fullWidth
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">Ticket Price</InputAdornment>,
+                                    endAdornment: <InputAdornment position="start">ETH</InputAdornment>,
+                                }}
+                                style={{width: '90%'}}
+                            />
+                            <TextField
+                                select
+                                className={classNames(classes.margin, classes.textField)}
+                                variant="outlined"
+                                // label="With Select"
+                                value={this.state.guessNumber}
+                                error={this.state.selectGuessNumberError}
+                                onChange={this.handleChange('guessNumber')}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">Guess Number</InputAdornment>,
+                                }}
+                                style={{width: '150px', fontWeight: 'bold'}}
+                            >
+                                {guessNumbers.map(option => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
 
-                    <TextField
-                        select
-                        className={classNames(classes.margin, classes.textField)}
-                        variant="outlined"
-                        // label="With Select"
-                        value={this.state.guessNumber}
-                        onChange={this.handleChange('guessNumber')}
-                        InputProps={{
-                            startAdornment: <InputAdornment position="start">Guess Number</InputAdornment>,
-                        }}
-                        style={{width: '150px'}}
-                    >
-                        {guessNumbers.map(option => (
-                            <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                            </MenuItem>
-                        ))}
-                    </TextField>
+                        <Button variant="outlined" className={classes.button} onClick={this.handlePlayLotteryPressed}>
+                            Play
+                        </Button>
 
-                    <Button variant="outlined" className={classes.button} onClick={this.handlePlayLotteryPressed}>
-                        Play
-                    </Button>
-                    <Collapse in={true} timeout="auto" unmountOnExit>
+                        {
+                            this.state.showPickWinnerButton ?
+                                <Button variant="outlined" className={classes.button}
+                                        onClick={this.handlePickWinnerPressed}>
+                                    Pick Winner
+                                </Button>
+                                : null
+                        }
+
+                    </div>
+                    <Paper className={classes.root} elevation={1}>
                         <Typography variant="h5" component="h3">
-                            Here you can find some details about the lottery...
+                            Lottery Details
                         </Typography>
-                    </Collapse>
+                        {this.props.currentLottery ? <LotteryDetails lottery={this.props.currentLottery}/> : null}
+                    </Paper>
+
                 </Paper>
             </div>
         );
@@ -117,13 +166,16 @@ FactoryPanel.propTypes = {
 
 const mapStateToProps = state => {
     return {
-        factory: state.factory
+        factory: state.factory,
+        currentLottery: state.lottery.activeLottery
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        onPlayLotteryPressed: (ticketPrice, guessNumber) => dispatch(playLottery(ticketPrice, guessNumber))
+        onPlayLotteryPressed: (ticketPrice, guessNumber) => dispatch(playLottery(ticketPrice, guessNumber)),
+        loadActiveLottery: address => dispatch(loadActiveLottery(address)),
+        pickWinner: () => dispatch(pickWinner())
     }
 };
 

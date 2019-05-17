@@ -1,4 +1,4 @@
-import {SET_FACTORY_ACTION} from './actionTypes';
+import {ON_PLAYED_LOTTERY_ACTION, SET_FACTORY_ACTION} from './actionTypes';
 import {uiStartLoading, uiStopLoading} from "./uiActionCreators";
 import LotteryFactory from "../../ethereum/lotteryFactory";
 import web3 from "../../ethereum/web3";
@@ -21,7 +21,7 @@ export const loadFactory = () => {
 export const setFactory = factoryDetails => {
     const factory = {
         manager: factoryDetails[0],
-        ticketPrice: web3.utils.hexToNumber(factoryDetails[1]),
+        ticketPrice: web3.utils.fromWei(String(factoryDetails[1]), 'ether'),
         maxGuessNumber: web3.utils.hexToNumber(factoryDetails[2]),
         currentLottery: factoryDetails[3],
         allLotteries: factoryDetails[4],
@@ -35,21 +35,61 @@ export const setFactory = factoryDetails => {
 
 
 export const playLottery = (ticketPrice, guessNumber) => {
-    return async dispatch => {
+    return dispatch => {
         dispatch(uiStartLoading());
-        try {
-            console.log("price: ", ticketPrice, "num: ", guessNumber);
-
-            const accounts = await web3.eth.getAccounts();
-            await LotteryFactory.methods.play(guessNumber).send(
+        let confirmed = false;
+        web3.eth.getAccounts().then(accounts => {
+            LotteryFactory.methods.play(guessNumber).send(
                 {
                     from: accounts[0],
-                    value: web3.utils.toWei(String(ticketPrice), 'wei')
+                    value: web3.utils.toWei(String(ticketPrice), 'ether')
                 }
-            );
-        } catch (e) {
-            dispatch(uiStopLoading());
-            console.error("Error while playing the lottery: ", e);
-        }
+            )
+                .on('error', (error) => {
+                    dispatch(uiStopLoading());
+                    console.log('Error while playing the lottery: ', error)
+                })
+                .on('confirmation', confirmationNumber => {
+                    // no idea why this is called several times so had to put a flag to call onSuccess only once...
+                    console.log('confirmationNumber: ', confirmationNumber);
+                    if (!confirmed) {
+                        confirmed = true;
+                        dispatch(onPlayedLottery(confirmationNumber));
+                        dispatch(uiStopLoading());
+                    }
+                });
+        });
+
+    }
+};
+
+export const onPlayedLottery = confirmationNumber => {
+    return {
+        type: ON_PLAYED_LOTTERY_ACTION,
+        confirmationNumber
+    }
+};
+
+export const pickWinner = () => {
+    return dispatch => {
+        dispatch(uiStartLoading());
+        let confirmed = false;
+        web3.eth.getAccounts().then(accounts => {
+            LotteryFactory.methods.pickWinner().send(
+                {
+                    from: accounts[0]
+                }
+            )
+                .on('error', (error) => {
+                    dispatch(uiStopLoading());
+                    console.log('Error while picking the winner: ', error)
+                })
+                .on('confirmation', () => {
+                    if (!confirmed) {
+                        confirmed = true;
+                        dispatch(uiStopLoading());
+                    }
+                });
+        });
     }
 };

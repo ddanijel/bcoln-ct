@@ -5,6 +5,23 @@ import Lottery from "../../ethereum/lottery";
 import web3 from '../../ethereum/web3';
 
 
+export const loadActiveLottery = address => {
+    return async dispatch => {
+        dispatch(uiStartLoading());
+        const lottery = await getLotteryDetails(address);
+        const lotteryData = {
+            address: address,
+            closed: lottery[0],
+            playersCount: web3.utils.hexToNumber(lottery[1]),
+            ticketPrice: web3.utils.fromWei(String(lottery[2]), 'ether'),
+            owner: lottery[3]
+        };
+        dispatch(setActiveLottery(lotteryData));
+        dispatch(uiStopLoading());
+    }
+};
+
+
 export const fetchDeployedLotteries = () => {
     return async dispatch => {
         try {
