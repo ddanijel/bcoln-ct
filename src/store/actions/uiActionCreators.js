@@ -1,7 +1,7 @@
 import {
-    CLOSE_CREATE_LOTTERY_DIALOG_ACTION,
+    CLOSE_CLOSED_LOTTERY_DIALOG_ACTION,
     CLOSE_PLAY_LOTTERY_DIALOG_ACTION,
-    OPEN_CREATE_LOTTERY_DIALOG_ACTION,
+    OPEN_CLOSED_LOTTERY_DIALOG_ACTION,
     OPEN_PLAY_LOTTERY_DIALOG_ACTION,
     UI_START_LOADING_ACTION,
     UI_STOP_LOADING_ACTION
@@ -23,15 +23,15 @@ export const uiStopLoading = () => {
 };
 
 
-export const uiOpenCreateLotteryDialog = () => {
+export const uiOpenPlayedLotteryDialog = () => {
     return {
-        type: OPEN_CREATE_LOTTERY_DIALOG_ACTION
+        type: OPEN_CLOSED_LOTTERY_DIALOG_ACTION
     };
 };
 
-export const uiCloseCreateLotteryDialog = () => {
+export const uiCloseClosedLotteryDialog = () => {
     return {
-        type: CLOSE_CREATE_LOTTERY_DIALOG_ACTION
+        type: CLOSE_CLOSED_LOTTERY_DIALOG_ACTION
     };
 };
 

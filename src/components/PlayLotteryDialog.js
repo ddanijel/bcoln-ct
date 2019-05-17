@@ -8,7 +8,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {connect} from "react-redux";
 import {uiClosePlayLotteryDialog} from "../store/actions/uiActionCreators";
-import {playLottery} from "../store/actions/lotteryActionCreators";
 
 
 class PlayLotteryDialog extends React.Component {
@@ -69,7 +68,6 @@ class PlayLotteryDialog extends React.Component {
 const mapDispatchToProps = dispatch => {
     return {
         onClosePlayLotteryDialog: () => dispatch(uiClosePlayLotteryDialog()),
-        onPlayLotteryPressed: (lottery, guess) => dispatch(playLottery(lottery, guess))
     }
 };
 

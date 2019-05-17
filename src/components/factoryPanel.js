@@ -80,7 +80,7 @@ class FactoryPanel extends Component {
     };
 
     handlePickWinnerPressed = () => {
-        this.props.pickWinner();
+        this.props.pickWinner(this.props.factory.currentLottery);
     };
 
 
@@ -175,7 +175,7 @@ const mapDispatchToProps = dispatch => {
     return {
         onPlayLotteryPressed: (ticketPrice, guessNumber) => dispatch(playLottery(ticketPrice, guessNumber)),
         loadActiveLottery: address => dispatch(loadActiveLottery(address)),
-        pickWinner: () => dispatch(pickWinner())
+        pickWinner: lotteryAddress => dispatch(pickWinner(lotteryAddress))
     }
 };
 

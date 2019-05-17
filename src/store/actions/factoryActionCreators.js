@@ -1,7 +1,8 @@
 import {ON_PLAYED_LOTTERY_ACTION, SET_FACTORY_ACTION} from './actionTypes';
-import {uiStartLoading, uiStopLoading} from "./uiActionCreators";
+import {uiOpenPlayedLotteryDialog, uiStartLoading, uiStopLoading} from "./uiActionCreators";
 import LotteryFactory from "../../ethereum/lotteryFactory";
 import web3 from "../../ethereum/web3";
+import {loadPlayedLottery} from "./lotteryActionCreators";
 
 
 export const loadFactory = () => {
@@ -70,7 +71,7 @@ export const onPlayedLottery = confirmationNumber => {
     }
 };
 
-export const pickWinner = () => {
+export const pickWinner = lotteryAddress => {
     return dispatch => {
         dispatch(uiStartLoading());
         let confirmed = false;
@@ -87,9 +88,17 @@ export const pickWinner = () => {
                 .on('confirmation', () => {
                     if (!confirmed) {
                         confirmed = true;
+                        dispatch(onPickedWinnerSuccess(lotteryAddress));
                         dispatch(uiStopLoading());
                     }
                 });
         });
+    }
+};
+
+export const onPickedWinnerSuccess = lotteryAddress => {
+    return dispatch => {
+        dispatch(loadPlayedLottery(lotteryAddress));
+        dispatch(uiOpenPlayedLotteryDialog())
     }
 };

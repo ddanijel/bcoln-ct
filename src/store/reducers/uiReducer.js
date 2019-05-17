@@ -1,7 +1,7 @@
 import {
-    CLOSE_CREATE_LOTTERY_DIALOG_ACTION,
+    CLOSE_CLOSED_LOTTERY_DIALOG_ACTION,
     CLOSE_PLAY_LOTTERY_DIALOG_ACTION,
-    OPEN_CREATE_LOTTERY_DIALOG_ACTION,
+    OPEN_CLOSED_LOTTERY_DIALOG_ACTION,
     OPEN_PLAY_LOTTERY_DIALOG_ACTION,
     UI_START_LOADING_ACTION,
     UI_STOP_LOADING_ACTION
@@ -9,7 +9,7 @@ import {
 
 const initialState = {
     isLoading: false,
-    isCreateLotteryDialogOpen: false,
+    isClosedLotteryDialogOpen: false,
     isPlayLotteryDialogOpen: false
 };
 
@@ -25,15 +25,15 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 isLoading: false
             };
-        case OPEN_CREATE_LOTTERY_DIALOG_ACTION:
+        case OPEN_CLOSED_LOTTERY_DIALOG_ACTION:
             return {
                 ...state,
-                isCreateLotteryDialogOpen: true
+                isClosedLotteryDialogOpen: true
             };
-        case CLOSE_CREATE_LOTTERY_DIALOG_ACTION:
+        case CLOSE_CLOSED_LOTTERY_DIALOG_ACTION:
             return {
                 ...state,
-                isCreateLotteryDialogOpen: false
+                isClosedLotteryDialogOpen: false
             };
         case OPEN_PLAY_LOTTERY_DIALOG_ACTION:
             return {

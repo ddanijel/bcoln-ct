@@ -6,6 +6,7 @@ import FactoryPanel from './components/factoryPanel';
 // import PlayLotteryDialog from "./components/PlayLotteryDialog";
 import {loadFactory} from "./store/actions/factoryActionCreators";
 import {connect} from "react-redux";
+import PlayedLotteryDialog from "./components/ClosedLotteryDialog";
 
 class App extends Component {
 
@@ -18,6 +19,7 @@ class App extends Component {
             <div className="App">
                 <AppBar/>
                 <FactoryPanel/>
+                <PlayedLotteryDialog/>
                 {/*<LotteriesTable/>*/}
                 {/*<CreateLotteryDialog/>*/}
                 {/*<PlayLotteryDialog/>*/}
