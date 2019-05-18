@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import AppBar from './components/AppBar';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import Layout from './containers/Layout';
 import FactoryPanel from './components/factoryPanel';
 // import LotteriesTable from './components/LotteriesTable'
 // import CreateLotteryDialog from "./components/CreateLotteryDialog";
 // import PlayLotteryDialog from "./components/PlayLotteryDialog";
 import {loadFactory} from "./store/actions/factoryActionCreators";
 import {connect} from "react-redux";
-import PlayedLotteryDialog from "./components/ClosedLotteryDialog";
 
 class App extends Component {
 
@@ -17,12 +17,13 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                <AppBar/>
-                <FactoryPanel/>
-                <PlayedLotteryDialog/>
-                {/*<LotteriesTable/>*/}
-                {/*<CreateLotteryDialog/>*/}
-                {/*<PlayLotteryDialog/>*/}
+                <Router>
+                    <Layout>
+                        <Switch>
+                            <Route exact path="/" component={FactoryPanel}/>
+                        </Switch>
+                    </Layout>
+                </Router>
             </div>
         );
     }

@@ -12,6 +12,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import {pickWinner, playLottery} from "../store/actions/factoryActionCreators";
 import {loadActiveLottery} from "../store/actions/lotteryActionCreators";
 import LotteryDetails from "./CurrentLotteryDetails";
+import PlayedLotteryDialog from './PlayLotteryDialog'
 import web3 from '../ethereum/web3'
 
 
@@ -155,6 +156,7 @@ class FactoryPanel extends Component {
                     </Paper>
 
                 </Paper>
+                <PlayedLotteryDialog/>
             </div>
         );
     }
