@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/bcoln-ct/static/css/main.76472c04.chunk.css",
-    "main.js": "/bcoln-ct/static/js/main.77e5e785.chunk.js",
-    "main.js.map": "/bcoln-ct/static/js/main.77e5e785.chunk.js.map",
+    "main.js": "/bcoln-ct/static/js/main.d56b63af.chunk.js",
+    "main.js.map": "/bcoln-ct/static/js/main.d56b63af.chunk.js.map",
     "runtime~main.js": "/bcoln-ct/static/js/runtime~main.21583021.js",
     "runtime~main.js.map": "/bcoln-ct/static/js/runtime~main.21583021.js.map",
-    "static/js/2.e12f829e.chunk.js": "/bcoln-ct/static/js/2.e12f829e.chunk.js",
-    "static/js/2.e12f829e.chunk.js.map": "/bcoln-ct/static/js/2.e12f829e.chunk.js.map",
+    "static/js/2.a3d0d587.chunk.js": "/bcoln-ct/static/js/2.a3d0d587.chunk.js",
+    "static/js/2.a3d0d587.chunk.js.map": "/bcoln-ct/static/js/2.a3d0d587.chunk.js.map",
     "index.html": "/bcoln-ct/index.html",
-    "precache-manifest.d12827a737907d07dbfa874f5569a8e7.js": "/bcoln-ct/precache-manifest.d12827a737907d07dbfa874f5569a8e7.js",
+    "precache-manifest.6b0dfc0b24c612d740f851fcc71b630e.js": "/bcoln-ct/precache-manifest.6b0dfc0b24c612d740f851fcc71b630e.js",
     "service-worker.js": "/bcoln-ct/service-worker.js",
     "static/css/main.76472c04.chunk.css.map": "/bcoln-ct/static/css/main.76472c04.chunk.css.map"
   }
