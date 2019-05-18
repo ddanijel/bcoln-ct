@@ -8,7 +8,9 @@ import Footer from '../components/layout/Footer';
 
 const Layout = (props) => {
 
-    let style = {minHeight: 'calc(100vh - 110px)'};
+    let style = {
+        minHeight: 'calc(100vh - 110px)'
+    };
     switch (props.location.pathname) {
         case '/':
             style = {minHeight: 'calc(100vh - 95px)'};
@@ -21,7 +23,9 @@ const Layout = (props) => {
         <Aux>
             <div style={style}>
                 <AppBar/>
-                {props.children}
+                <div className='main-content'>
+                    {props.children}
+                </div>
             </div>
             <Footer/>
         </Aux>
