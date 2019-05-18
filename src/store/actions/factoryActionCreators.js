@@ -50,12 +50,10 @@ export const playLottery = (ticketPrice, guessNumber) => {
                     dispatch(uiStopLoading());
                     console.log('Error while playing the lottery: ', error)
                 })
-                .on('confirmation', confirmationNumber => {
-                    // no idea why this is called several times so had to put a flag to call onSuccess only once...
-                    console.log('confirmationNumber: ', confirmationNumber);
+                .on('confirmation', () => {
                     if (!confirmed) {
                         confirmed = true;
-                        dispatch(onPlayedLottery(confirmationNumber));
+                        dispatch(onPlayedLottery(Math.random()));
                         dispatch(uiStopLoading());
                     }
                 });
