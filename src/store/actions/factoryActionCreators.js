@@ -43,7 +43,7 @@ export const setFactory = factory => {
 };
 
 
-export const playLottery = (ticketPrice, guessNumber) => {
+export const playLottery = (activeLottery, ticketPrice, guessNumber) => {
     return dispatch => {
         dispatch(uiStartLoading());
         let confirmed = false;
@@ -56,11 +56,12 @@ export const playLottery = (ticketPrice, guessNumber) => {
             )
                 .on('error', (error) => {
                     dispatch(uiStopLoading());
-                    console.log('Error while playing the lottery: ', error)
+                    console.error('Error while playing the lottery: ', error)
                 })
                 .on('confirmation', () => {
                     if (!confirmed) {
                         confirmed = true;
+                        dispatch(loadActiveLottery(activeLottery));
                         dispatch(onPlayedLottery(Math.random()));
                         dispatch(uiStopLoading());
                     }
@@ -89,7 +90,7 @@ export const pickWinner = lotteryAddress => {
             )
                 .on('error', (error) => {
                     dispatch(uiStopLoading());
-                    console.log('Error while picking the winner: ', error)
+                    console.error('Error while picking the winner: ', error)
                 })
                 .on('confirmation', () => {
                     if (!confirmed) {

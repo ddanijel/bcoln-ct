@@ -3,9 +3,6 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import Layout from './containers/Layout';
 import FactoryPanel from './components/factoryPanel';
 import HistoryPage from './components/HistoryPage';
-// import LotteriesTable from './components/LotteriesTable'
-// import CreateLotteryDialog from "./components/CreateLotteryDialog";
-// import PlayLotteryDialog from "./components/PlayLotteryDialog";
 import {loadFactory} from "./store/actions/factoryActionCreators";
 import {connect} from "react-redux";
 
@@ -22,7 +19,7 @@ class App extends Component {
                     <Layout>
                         <Switch>
                             {/*this is just to make it work on github pages*/}
-                            {/*<Route exact path="/" component={FactoryPanel}/>*/}
+                            <Route exact path="/" component={FactoryPanel}/>
                             <Route exact path="/bcoln-ct" component={FactoryPanel}/>
                             <Route exact path="/history" component={HistoryPage}/>
                         </Switch>

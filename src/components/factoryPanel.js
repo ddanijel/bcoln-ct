@@ -42,13 +42,15 @@ class FactoryPanel extends Component {
         showPickWinnerButton: false
     };
 
-    componentWillReceiveProps(nextProps, nextContext) {
-        if (this.props.factory.currentLottery === null && nextProps.factory.currentLottery !== null) {
-            this.props.loadActiveLottery(nextProps.factory.currentLottery);
+    componentDidMount() {
+        if (this.props.factory.manager !== null) {
             this.shouldShowPickWinnerButton();
         }
-        if (this.props.factory.confirmationNumber !== nextProps.factory.confirmationNumber) {
-            this.props.loadActiveLottery(nextProps.factory.currentLottery);
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (nextProps.factory.manager !== null) {
+            this.shouldShowPickWinnerButton();
         }
     }
 
@@ -63,7 +65,7 @@ class FactoryPanel extends Component {
         if (guessNumber <= maxGuessNumber && guessNumber >= 0) {
             this.setState({selectGuessNumberError: false});
             const ticketPrice = this.props.factory.ticketPrice;
-            this.props.onPlayLotteryPressed(ticketPrice, guessNumber);
+            this.props.onPlayLotteryPressed(this.props.factory.currentLottery, ticketPrice, guessNumber);
         } else {
             this.setState({selectGuessNumberError: true});
         }
@@ -134,13 +136,14 @@ class FactoryPanel extends Component {
                             ))}
                         </TextField>
 
-                        <Button variant="outlined" className={classes.button} onClick={this.handlePlayLotteryPressed}>
+                        <Button disabled={this.props.isLoading} variant="outlined" className={classes.button}
+                                onClick={this.handlePlayLotteryPressed}>
                             Play
                         </Button>
 
                         {
                             this.state.showPickWinnerButton ?
-                                <Button variant="outlined" className={classes.button}
+                                <Button disabled={this.props.isLoading} variant="outlined" className={classes.button}
                                         onClick={this.handlePickWinnerPressed}>
                                     Pick Winner
                                 </Button>
@@ -169,13 +172,14 @@ FactoryPanel.propTypes = {
 const mapStateToProps = state => {
     return {
         factory: state.factory,
-        currentLottery: state.lottery.activeLottery
+        currentLottery: state.lottery.activeLottery,
+        isLoading: state.ui.isLoading
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        onPlayLotteryPressed: (ticketPrice, guessNumber) => dispatch(playLottery(ticketPrice, guessNumber)),
+        onPlayLotteryPressed: (activeLottery, ticketPrice, guessNumber) => dispatch(playLottery(activeLottery, ticketPrice, guessNumber)),
         loadActiveLottery: address => dispatch(loadActiveLottery(address)),
         pickWinner: lotteryAddress => dispatch(pickWinner(lotteryAddress))
     }

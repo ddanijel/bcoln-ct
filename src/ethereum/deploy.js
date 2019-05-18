@@ -24,7 +24,7 @@ const deploy = async () => {
 };
 
 deploy().catch(error => {
-    console.log(error)
+    console.error(error)
 });
 
 
