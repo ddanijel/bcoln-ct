@@ -12,7 +12,9 @@ const Layout = (props) => {
     switch (props.location.pathname) {
         case '/':
             style = {minHeight: 'calc(100vh - 95px)'};
-            break
+            break;
+        default:
+            break;
     }
 
     return (

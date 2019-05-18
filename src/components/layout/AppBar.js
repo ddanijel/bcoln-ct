@@ -1,10 +1,10 @@
 import React from 'react';
+import {Link, withRouter} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles/index';
 import AppBar from '@material-ui/core/AppBar/index';
 import Toolbar from '@material-ui/core/Toolbar/index';
 import Typography from '@material-ui/core/Typography/index';
-import Button from '@material-ui/core/Button/index';
 import IconButton from '@material-ui/core/IconButton/index';
 import MenuIcon from '@material-ui/icons/Menu';
 import {connect} from "react-redux";
@@ -37,11 +37,9 @@ function ButtonAppBar(props) {
                         <MenuIcon/>
                     </IconButton>
                     <Typography variant="h6" color="inherit" className={classes.grow}>
-                        Blockchain Lottery
+                        <Link to="/" style={{color: "inherit", textDecoration: "none"}}>Blockchain Lottery</Link>
                     </Typography>
-                    <Button
-                        // onClick={() => props.onOpenCreateLotteryDialog()}
-                        color="inherit">Create Lottery</Button>
+                    <Link to="/history" style={{color: "inherit", textDecoration: "none"}}>History</Link>
                 </Toolbar>
             </AppBar>
             {props.isLoading ? <ProgressBar/> : null}
@@ -65,5 +63,4 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ButtonAppBar));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ButtonAppBar)));

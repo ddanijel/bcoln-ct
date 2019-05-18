@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import Layout from './containers/Layout';
 import FactoryPanel from './components/factoryPanel';
+import HistoryPage from './components/HistoryPage';
 // import LotteriesTable from './components/LotteriesTable'
 // import CreateLotteryDialog from "./components/CreateLotteryDialog";
 // import PlayLotteryDialog from "./components/PlayLotteryDialog";
@@ -21,6 +22,7 @@ class App extends Component {
                     <Layout>
                         <Switch>
                             <Route exact path="/" component={FactoryPanel}/>
+                            <Route exact path="/history" component={HistoryPage}/>
                         </Switch>
                     </Layout>
                 </Router>
