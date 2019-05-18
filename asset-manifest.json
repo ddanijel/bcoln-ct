@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/bcoln-ct/static/css/main.34de6062.chunk.css",
-    "main.js": "/bcoln-ct/static/js/main.5085ef97.chunk.js",
-    "main.js.map": "/bcoln-ct/static/js/main.5085ef97.chunk.js.map",
+    "main.js": "/bcoln-ct/static/js/main.39c3ac6f.chunk.js",
+    "main.js.map": "/bcoln-ct/static/js/main.39c3ac6f.chunk.js.map",
     "runtime~main.js": "/bcoln-ct/static/js/runtime~main.21583021.js",
     "runtime~main.js.map": "/bcoln-ct/static/js/runtime~main.21583021.js.map",
-    "static/js/2.b233e776.chunk.js": "/bcoln-ct/static/js/2.b233e776.chunk.js",
-    "static/js/2.b233e776.chunk.js.map": "/bcoln-ct/static/js/2.b233e776.chunk.js.map",
+    "static/js/2.2ba9d072.chunk.js": "/bcoln-ct/static/js/2.2ba9d072.chunk.js",
+    "static/js/2.2ba9d072.chunk.js.map": "/bcoln-ct/static/js/2.2ba9d072.chunk.js.map",
     "index.html": "/bcoln-ct/index.html",
-    "precache-manifest.7b656a13e08930622e9b686ce2efc535.js": "/bcoln-ct/precache-manifest.7b656a13e08930622e9b686ce2efc535.js",
+    "precache-manifest.f3c617580276df32ce2d3e2256710c83.js": "/bcoln-ct/precache-manifest.f3c617580276df32ce2d3e2256710c83.js",
     "service-worker.js": "/bcoln-ct/service-worker.js",
     "static/css/main.34de6062.chunk.css.map": "/bcoln-ct/static/css/main.34de6062.chunk.css.map"
   }
