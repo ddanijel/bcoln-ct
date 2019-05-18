@@ -37,7 +37,8 @@ function ButtonAppBar(props) {
                         <MenuIcon/>
                     </IconButton>
                     <Typography variant="h6" color="inherit" className={classes.grow}>
-                        <Link to="/" style={{color: "inherit", textDecoration: "none"}}>Blockchain Lottery</Link>
+                        <Link to="/bcoln-ct" style={{color: "inherit", textDecoration: "none"}}>Blockchain
+                            Lottery</Link>
                     </Typography>
                     <Link to="/history" style={{color: "inherit", textDecoration: "none"}}>History</Link>
                 </Toolbar>

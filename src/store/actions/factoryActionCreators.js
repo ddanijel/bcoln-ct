@@ -2,7 +2,7 @@ import {ON_PLAYED_LOTTERY_ACTION, SET_FACTORY_ACTION} from './actionTypes';
 import {uiOpenPlayedLotteryDialog, uiStartLoading, uiStopLoading} from "./uiActionCreators";
 import LotteryFactory from "../../ethereum/lotteryFactory";
 import web3 from "../../ethereum/web3";
-import {loadPlayedLottery} from "./lotteryActionCreators";
+import {loadActiveLottery, loadPlayedLottery} from "./lotteryActionCreators";
 
 
 export const loadFactory = () => {
@@ -10,7 +10,7 @@ export const loadFactory = () => {
         dispatch(uiStartLoading());
         try {
             const factoryDetails = await LotteryFactory.methods.describeFactory().call();
-            dispatch(setFactory(factoryDetails));
+            dispatch(processFactory(factoryDetails));
         } catch (e) {
             dispatch(uiStopLoading());
             console.error('Error while fetching deployed lotteries: ', e);
@@ -19,15 +19,23 @@ export const loadFactory = () => {
     }
 };
 
-export const setFactory = factoryDetails => {
-    const factory = {
-        manager: factoryDetails[0],
-        ticketPrice: web3.utils.fromWei(String(factoryDetails[1]), 'ether'),
-        maxGuessNumber: web3.utils.hexToNumber(factoryDetails[2]),
-        currentLottery: factoryDetails[3],
-        allLotteries: factoryDetails[4],
-        randomNumberGenerator: factoryDetails[5]
-    };
+export const processFactory = factoryDetails => {
+    return dispatch => {
+        const factory = {
+            manager: factoryDetails[0],
+            ticketPrice: web3.utils.fromWei(String(factoryDetails[1]), 'ether'),
+            maxGuessNumber: web3.utils.hexToNumber(factoryDetails[2]),
+            currentLottery: factoryDetails[3],
+            allLotteries: factoryDetails[4],
+            randomNumberGenerator: factoryDetails[5]
+        };
+        dispatch(setFactory(factory));
+        dispatch(loadActiveLottery(factory.currentLottery));
+    }
+};
+
+export const setFactory = factory => {
+
     return {
         type: SET_FACTORY_ACTION,
         factory
@@ -96,6 +104,7 @@ export const pickWinner = lotteryAddress => {
 
 export const onPickedWinnerSuccess = lotteryAddress => {
     return dispatch => {
+        dispatch(loadFactory());
         dispatch(loadPlayedLottery(lotteryAddress));
         dispatch(uiOpenPlayedLotteryDialog())
     }

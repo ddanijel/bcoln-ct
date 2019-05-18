@@ -12,8 +12,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import {pickWinner, playLottery} from "../store/actions/factoryActionCreators";
 import {loadActiveLottery} from "../store/actions/lotteryActionCreators";
 import LotteryDetails from "./CurrentLotteryDetails";
-import PlayedLotteryDialog from './PlayLotteryDialog'
 import web3 from '../ethereum/web3'
+import ClosedLotteryDialog from "./ClosedLotteryDialog";
 
 
 const styles = theme => ({
@@ -100,39 +100,39 @@ class FactoryPanel extends Component {
                         Play the lottery
                     </Typography>
                     <div style={{width: '100%'}}>
-                            <TextField
-                                disabled
-                                id="ticket"
-                                className={classNames(classes.margin, classes.textField)}
-                                variant="outlined"
-                                // label="Ticket Price"
-                                value={this.props.factory.ticketPrice}
-                                fullWidth
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start">Ticket Price</InputAdornment>,
-                                    endAdornment: <InputAdornment position="start">ETH</InputAdornment>,
-                                }}
-                                style={{width: '90%'}}
-                            />
-                            <TextField
-                                select
-                                className={classNames(classes.margin, classes.textField)}
-                                variant="outlined"
-                                // label="With Select"
-                                value={this.state.guessNumber}
-                                error={this.state.selectGuessNumberError}
-                                onChange={this.handleChange('guessNumber')}
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start">Guess Number</InputAdornment>,
-                                }}
-                                style={{width: '150px', fontWeight: 'bold'}}
-                            >
-                                {guessNumbers.map(option => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
+                        <TextField
+                            disabled
+                            id="ticket"
+                            className={classNames(classes.margin, classes.textField)}
+                            variant="outlined"
+                            // label="Ticket Price"
+                            value={this.props.factory.ticketPrice}
+                            fullWidth
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">Ticket Price</InputAdornment>,
+                                endAdornment: <InputAdornment position="start">ETH</InputAdornment>,
+                            }}
+                            style={{width: '90%'}}
+                        />
+                        <TextField
+                            select
+                            className={classNames(classes.margin, classes.textField)}
+                            variant="outlined"
+                            // label="With Select"
+                            value={this.state.guessNumber}
+                            error={this.state.selectGuessNumberError}
+                            onChange={this.handleChange('guessNumber')}
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">Guess Number</InputAdornment>,
+                            }}
+                            style={{width: '150px', fontWeight: 'bold'}}
+                        >
+                            {guessNumbers.map(option => (
+                                <MenuItem key={option.value} value={option.value}>
+                                    {option.label}
+                                </MenuItem>
+                            ))}
+                        </TextField>
 
                         <Button variant="outlined" className={classes.button} onClick={this.handlePlayLotteryPressed}>
                             Play
@@ -156,7 +156,7 @@ class FactoryPanel extends Component {
                     </Paper>
 
                 </Paper>
-                <PlayedLotteryDialog/>
+                <ClosedLotteryDialog/>
             </div>
         );
     }
