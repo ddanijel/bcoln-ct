@@ -134,6 +134,6 @@ contract Lottery {
 
 contract RandomNumberOracle {
     function getRandom(uint range) public view returns (uint) {
-        return uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty))) % range;
+        return uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty))) % (range + 1);
     }
 }
