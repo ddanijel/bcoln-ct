@@ -3,6 +3,7 @@ import {withStyles} from '@material-ui/core/styles';
 import {withRouter} from "react-router-dom";
 
 import Typography from '@material-ui/core/Typography';
+import Snackbar from "../Snackbar";
 
 const styles = theme => ({
     footer: {
@@ -25,6 +26,7 @@ const footer = (props) => {
                         component="p">
                 Contact us...
             </Typography>
+            <Snackbar/>
         </footer>
     );
 };

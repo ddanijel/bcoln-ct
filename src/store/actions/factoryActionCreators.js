@@ -1,5 +1,5 @@
 import {ON_PLAYED_LOTTERY_ACTION, SET_FACTORY_ACTION} from './actionTypes';
-import {uiOpenPlayedLotteryDialog, uiStartLoading, uiStopLoading} from "./uiActionCreators";
+import {uiOpenPlayedLotteryDialog, uiOpenSnackbar, uiStartLoading, uiStopLoading} from "./uiActionCreators";
 import LotteryFactory from "../../ethereum/lotteryFactory";
 import web3 from "../../ethereum/web3";
 import {loadActiveLottery, loadPlayedLottery} from "./lotteryActionCreators";
@@ -47,6 +47,7 @@ export const playLottery = (activeLottery, ticketPrice, guessNumber) => {
     return dispatch => {
         dispatch(uiStartLoading());
         let confirmed = false;
+        let transactonHash = '';
         web3.eth.getAccounts().then(accounts => {
             LotteryFactory.methods.play(guessNumber).send(
                 {
@@ -58,14 +59,27 @@ export const playLottery = (activeLottery, ticketPrice, guessNumber) => {
                     dispatch(uiStopLoading());
                     console.error('Error while playing the lottery: ', error)
                 })
+                .on('transactionHash', hash => {
+                    transactonHash = hash;
+                })
                 .on('confirmation', () => {
                     if (!confirmed) {
                         confirmed = true;
                         dispatch(loadActiveLottery(activeLottery));
                         dispatch(onPlayedLottery(Math.random()));
                         dispatch(uiStopLoading());
+                        const snackbar = {
+                            isOpen: true,
+                            message: 'You have played the lottery',
+                            button: {
+                                text: 'View on Etherscan',
+                                link: `https://rinkeby.etherscan.io/tx/${transactonHash}`
+                            }
+                        };
+                        dispatch(uiOpenSnackbar(snackbar));
                     }
-                });
+                })
+            ;
         });
 
     }
