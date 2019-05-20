@@ -10,6 +10,7 @@ import Paper from "@material-ui/core/Paper";
 import {withRouter} from "react-router";
 import {connect} from "react-redux";
 import LotteryHistoryDetails from "./LotteryHistoryDetails";
+import InputBase from "@material-ui/core/InputBase";
 
 const styles = theme => ({
     root: {
@@ -30,7 +31,7 @@ const styles = theme => ({
     secondaryHeading: {
         fontSize: theme.typography.pxToRem(15),
         color: theme.palette.text.secondary,
-    },
+    }
 });
 
 class HistoryPage extends React.Component {
@@ -60,7 +61,9 @@ class HistoryPage extends React.Component {
                                                onChange={this.handleChange(address)}>
                             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
                                 <Typography className={classes.secondaryHeading}>Address: &nbsp;</Typography>
-                                <Typography className={classes.heading}>{address}</Typography>
+                                <InputBase style={{width: '90%'}} disabled className={classes.margin}
+                                           defaultValue={address}/>
+                                {/*<Typography className={classes.heading}>{address}</Typography>*/}
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
                                 <LotteryHistoryDetails address={address}/>

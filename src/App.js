@@ -18,8 +18,8 @@ class App extends Component {
                 <Router>
                     <Layout>
                         <Switch>
-                            {/*this is just to make it work on github pages*/}
                             <Route exact path="/" component={FactoryPanel}/>
+                            {/*this is just to make it work on github pages*/}
                             <Route exact path="/bcoln-ct" component={FactoryPanel}/>
                             <Route exact path="/history" component={HistoryPage}/>
                         </Switch>
