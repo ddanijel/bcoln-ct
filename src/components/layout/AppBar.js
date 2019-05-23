@@ -58,10 +58,4 @@ const mapStateToProps = state => {
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        // onOpenCreateLotteryDialog: () => dispatch(uiOpenCreateLotteryDialog())
-    }
-};
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ButtonAppBar)));
+export default withRouter(connect(mapStateToProps, null)(withStyles(styles)(ButtonAppBar)));
